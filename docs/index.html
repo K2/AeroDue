@@ -3,17 +3,63 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AeroDue / Comped — Pitch</title>
-<meta http-equiv="refresh" content="0; url=./flow.html">
-<link rel="canonical" href="./flow.html">
+<title>AeroDue / Comped — Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  html,body{height:100%;margin:0;background:#0A0F0D;color:#EAF0ED;
-    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    display:flex;align-items:center;justify-content:center}
-  a{color:#3FCF8E;text-decoration:none}
+  :root{--ink:#0A0F0D;--fg:#EAF0ED;--fg-dim:#9AA6A1;--money:#3FCF8E;--sky:#38BDF8;
+    --line:rgba(255,255,255,0.12);--display:'Hanken Grotesk',sans-serif;--mono:'JetBrains Mono',monospace}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;background:var(--ink);color:var(--fg);font-family:var(--display);
+    display:flex;align-items:center;justify-content:center;padding:32px}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;
+    background:radial-gradient(800px 500px at 70% 0%,rgba(63,207,142,0.06),transparent 60%),
+               radial-gradient(700px 400px at 0% 100%,rgba(56,189,248,0.05),transparent 55%)}
+  main{position:relative;z-index:1;max-width:520px;width:100%}
+  h1{font-size:2rem;font-weight:700;letter-spacing:-0.03em;margin-bottom:8px}
+  p{color:var(--fg-dim);line-height:1.5;margin-bottom:28px;font-weight:300}
+  .deck{display:flex;flex-direction:column;gap:14px}
+  a{display:flex;align-items:center;justify-content:space-between;padding:20px 22px;
+    border:1px solid var(--line);border-radius:14px;text-decoration:none;color:var(--fg);
+    background:rgba(255,255,255,0.02);transition:border-color .2s,background .2s}
+  a:hover{border-color:rgba(255,255,255,0.22);background:rgba(255,255,255,0.04)}
+  a .lbl{font-size:1.1rem;font-weight:600}
+  a .sub{font-family:var(--mono);font-size:11px;color:var(--fg-dim);margin-top:4px;letter-spacing:.06em}
+  a .arr{font-family:var(--mono);font-size:18px}
+  a.pitch .arr{color:var(--money)}
+  a.tech .arr{color:var(--sky)}
+  .md{margin-top:24px;font-family:var(--mono);font-size:12px}
+  .md a{display:inline;padding:0;border:none;background:none;color:var(--fg-dim)}
+  .md a:hover{color:var(--fg)}
 </style>
 </head>
 <body>
-  <p>Loading the pitch deck… if it doesn't redirect, <a href="./flow.html">open it here</a>.</p>
+<main>
+  <h1>AeroDue docs</h1>
+  <p>Interactive slide decks and markdown references for the repo.</p>
+  <div class="deck">
+    <a class="pitch" href="./flow.html">
+      <div>
+        <div class="lbl">Product pitch</div>
+        <div class="sub">Comped · 11 slides · investor story</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+    <a class="tech" href="./tech.html">
+      <div>
+        <div class="lbl">Technical deck</div>
+        <div class="sub">Cursor · local LLM · MCP · 8 slides</div>
+      </div>
+      <span class="arr">→</span>
+    </a>
+  </div>
+  <p class="md">
+    <a href="https://github.com/K2/AeroDue">Repository</a>
+    · <a href="./ARCHITECTURE.md">Architecture</a>
+    · <a href="./MCP.md">MCP</a>
+    · <a href="./PITCH.md">PITCH.md</a>
+  </p>
+</main>
 </body>
 </html>

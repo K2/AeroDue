@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AeroDue — Technical Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0F0D; --ink-2:#101614; --ink-3:#18201D;
+    --line:rgba(255,255,255,0.09); --line-2:rgba(255,255,255,0.18);
+    --fg:#EAF0ED; --fg-dim:#9AA6A1; --fg-faint:#5C6863;
+    --money:#3FCF8E; --money-glow:rgba(63,207,142,0.20);
+    --alert:#F5A623; --alert-bg:rgba(245,166,35,0.12); --alert-line:rgba(245,166,35,0.35);
+    --sky:#38BDF8; --sky-glow:rgba(56,189,248,0.18);
+    --display:'Hanken Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  body{background:var(--ink);color:var(--fg);font-family:var(--display);
+    font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(1200px 700px at 15% -10%,rgba(56,189,248,0.06),transparent 55%),
+               radial-gradient(900px 600px at 90% 110%,rgba(63,207,142,0.05),transparent 60%)}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  .stage{position:relative;width:100vw;height:100vh;z-index:1}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(32px,7vw,110px);opacity:0;transform:translateY(14px) scale(0.995);
+    transition:opacity .5s ease,transform .5s ease;pointer-events:none;
+    overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide.active{opacity:1;transform:none;pointer-events:auto}
+
+  .chrome-top{position:fixed;top:26px;left:clamp(32px,7vw,110px);right:clamp(32px,7vw,110px);
+    display:flex;justify-content:space-between;align-items:center;z-index:5;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--fg-faint);text-transform:uppercase}
+  .brandmark{display:flex;align-items:center;gap:9px;color:var(--fg-dim)}
+  .brandmark .dot{width:7px;height:7px;border-radius:50%;background:var(--sky);box-shadow:0 0 10px var(--sky-glow)}
+  .counter{position:fixed;bottom:24px;right:clamp(32px,7vw,110px);z-index:5;
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--fg-faint)}
+  .counter b{color:var(--fg)}
+  .hint{position:fixed;bottom:24px;left:clamp(32px,7vw,110px);z-index:5;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--fg-faint);text-transform:uppercase}
+  .progress{position:fixed;bottom:0;left:0;height:2px;background:var(--sky);z-index:6;
+    transition:width .5s ease;box-shadow:0 0 12px var(--sky-glow)}
+
+  .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:26px}
+  .kicker .acc{color:var(--money)} .kicker .sky{color:var(--sky)}
+  h1{font-size:clamp(40px,7vw,104px);font-weight:700;line-height:0.98;letter-spacing:-0.03em;max-width:20ch}
+  h2{font-size:clamp(30px,4.6vw,60px);font-weight:600;line-height:1.04;letter-spacing:-0.025em;max-width:22ch}
+  .lead{font-size:clamp(17px,1.7vw,23px);color:var(--fg-dim);line-height:1.5;max-width:54ch;margin-top:26px;font-weight:300}
+  .mono{font-family:var(--mono)} .money{color:var(--money)} .sky{color:var(--sky)}
+
+  #s1 .logo{font-size:clamp(48px,8vw,112px);font-weight:800;letter-spacing:-0.04em}
+  #s1 .logo .pin{color:var(--sky)}
+  #s1 .tag{font-size:clamp(18px,2.2vw,28px);font-weight:300;color:var(--fg-dim);margin-top:28px;max-width:32ch;line-height:1.4}
+  #s1 .tag b{color:var(--fg);font-weight:600}
+  .ticketstrip{margin-top:44px;display:flex;gap:0;font-family:var(--mono);font-size:12px;letter-spacing:.12em;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content;flex-wrap:wrap}
+  .ticketstrip div{padding:13px 20px;border-right:1px dashed var(--line-2);color:var(--fg-dim)}
+  .ticketstrip div:last-child{border-right:none}
+  .ticketstrip span{color:var(--fg-faint);display:block;font-size:9.5px;margin-bottom:5px;letter-spacing:.18em}
+
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:42px;max-width:1100px}
+  .step{border:1px solid var(--line);border-radius:14px;padding:24px 22px;background:var(--ink-2)}
+  .step .n{font-family:var(--mono);font-size:13px;color:var(--sky);letter-spacing:.1em;margin-bottom:18px}
+  .step .h{font-size:21px;font-weight:600;margin-bottom:9px;letter-spacing:-0.01em}
+  .step .d{font-size:13.5px;color:var(--fg-dim);line-height:1.5;font-weight:300}
+
+  .stack{margin-top:38px;display:flex;flex-direction:column;gap:16px;max-width:920px}
+  .stack .item{display:flex;gap:22px;align-items:baseline;padding:20px 24px;border:1px solid var(--line);border-radius:13px;background:var(--ink-2)}
+  .stack .item .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--sky);flex:none;width:140px}
+  .stack .item .body{font-size:16px;color:var(--fg);line-height:1.45;font-weight:300}
+  .stack .item .body b{font-weight:600}
+
+  .srclist{margin-top:34px;display:flex;flex-direction:column;gap:0;max-width:820px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .srclist .row{display:flex;align-items:baseline;justify-content:space-between;padding:20px 24px;border-bottom:1px dashed var(--line)}
+  .srclist .row:last-child{border-bottom:none}
+  .srclist .lbl{font-size:clamp(17px,1.8vw,24px);font-weight:500}
+  .srclist .sub{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint);letter-spacing:.08em;margin-top:6px}
+  .srclist .amt{font-family:var(--mono);font-size:14px;color:var(--money);text-align:right}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:38px;max-width:1100px}
+  .col{border:1px solid var(--line);border-radius:16px;padding:30px 28px;background:var(--ink-2)}
+  .col.us{border-color:rgba(56,189,248,0.45);background:linear-gradient(180deg,rgba(56,189,248,0.07),transparent)}
+  .col .who{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:16px}
+  .col.us .who{color:var(--sky)}
+  .col .big{font-size:26px;font-weight:700;letter-spacing:-0.02em;line-height:1.2;margin-bottom:14px}
+  .col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+  .col li{font-size:14.5px;color:var(--fg-dim);line-height:1.45;padding-left:20px;position:relative;font-weight:300}
+  .col li::before{content:"—";position:absolute;left:0;color:var(--fg-faint)}
+  .col.us li::before{content:"+";color:var(--sky)}
+
+  .flow{margin-top:36px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;max-width:1000px;font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+  .flow .box{padding:14px 18px;border:1px solid var(--line);border-radius:10px;background:var(--ink-2);color:var(--fg-dim)}
+  .flow .box.hi{border-color:rgba(63,207,142,0.45);color:var(--money)}
+  .flow .box.sky{border-color:rgba(56,189,248,0.45);color:var(--sky)}
+  .flow .arr{color:var(--fg-faint);font-size:16px}
+
+  .codeblock{margin-top:32px;max-width:820px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--ink-2)}
+  .codeblock .bar{display:flex;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--fg-faint);text-transform:uppercase}
+  .codeblock pre{padding:18px 20px;font-family:var(--mono);font-size:12.5px;line-height:1.55;color:var(--fg-dim);overflow-x:auto}
+  .codeblock .c{color:var(--fg-faint)} .codeblock .k{color:var(--sky)} .codeblock .s{color:var(--money)}
+
+  .cursor-badge{display:inline-flex;align-items:center;gap:10px;margin-top:32px;padding:12px 20px;
+    border:1px solid var(--line-2);border-radius:12px;background:var(--ink-2);font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--fg-dim)}
+  .cursor-badge .mark{width:10px;height:10px;border-radius:3px;background:linear-gradient(135deg,var(--sky),var(--money))}
+
+  .links{margin-top:36px;display:flex;flex-wrap:wrap;gap:12px}
+  .links a{font-family:var(--mono);font-size:12px;letter-spacing:.08em;color:var(--sky);text-decoration:none;
+    padding:10px 16px;border:1px solid rgba(56,189,248,0.35);border-radius:8px}
+  .links a:hover{background:rgba(56,189,248,0.08)}
+
+  #notes{position:fixed;inset:0;z-index:50;background:rgba(5,8,7,0.96);backdrop-filter:blur(8px);
+    display:none;flex-direction:column;padding:clamp(32px,7vw,90px);overflow:auto}
+  #notes.show{display:flex}
+  #notes .nk{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--sky);margin-bottom:22px}
+  #notes h3{font-size:30px;font-weight:700;margin-bottom:24px;letter-spacing:-0.02em}
+  #notes .body{font-size:18px;line-height:1.7;color:var(--fg-dim);max-width:72ch;font-weight:300;white-space:pre-wrap}
+  #notes .body b{color:var(--fg);font-weight:600}
+  #notes .close{position:fixed;top:26px;right:30px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+
+  @media(max-width:760px){
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .cols{grid-template-columns:1fr}
+    .stack .item{flex-direction:column;gap:8px}
+    .stack .item .tag{width:auto}
+    .slide{justify-content:flex-start;padding:78px 22px 84px}
+    .flow .arr{display:none}
+    .hint{display:none}
+  }
+  @media(max-width:460px){.steps{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="chrome-top">
+  <div class="brandmark"><span class="dot"></span>AERODUE</div>
+  <div>TECH&nbsp;DECK&nbsp;·&nbsp;<a href="./flow.html" style="color:var(--fg-faint);text-decoration:none">PITCH</a></div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- 1 TITLE -->
+  <section class="slide active" id="s1">
+    <div class="kicker">How we built it</div>
+    <div class="logo">Built with <span class="pin">Cursor</span></div>
+    <div class="tag">An <b>offline-first</b> Android app: pure Kotlin rules engine, a <b>SMOL on-device LLM</b>, and an <b>MCP connector surface</b> so your phone plugs into a larger AI assistant framework.</div>
+    <div class="cursor-badge"><span class="mark"></span> AGENT-ASSISTED · ITERATIVE · SHIPPED IN DAYS</div>
+    <div class="ticketstrip">
+      <div><span>CORE</span>KOTLIN :core</div>
+      <div><span>LLM</span>LITERT-LM 0.13</div>
+      <div><span>MODEL</span>QWEN2.5-0.5B</div>
+      <div><span>UI</span>COMPOSE M3</div>
+    </div>
+  </section>
+
+  <!-- 2 CURSOR WORKFLOW -->
+  <section class="slide" id="s2">
+    <div class="kicker">Development model</div>
+    <h2>Cursor as the factory floor.</h2>
+    <div class="lead">We used Cursor agents to explore the repo, implement module-by-module, run Gradle on-device, and keep Kotlin <code class="mono">core</code> aligned with the Python parity backend — without shipping cloud inference in the default path.</div>
+    <div class="steps">
+      <div class="step"><div class="n">01 / SCOPE</div><div class="h">Rules first</div><div class="d">CompensationEngine + Vitest/parity tests before UI polish. The receipt logic is the IP.</div></div>
+      <div class="step"><div class="n">02 / AGENTS</div><div class="h">Parallel work</div><div class="d">UI, filing flows, MCP framework, and docs ran as coordinated agent tasks with minimal merge pain.</div></div>
+      <div class="step"><div class="n">03 / DEVICE</div><div class="h">Pixel loop</div><div class="d">assembleDebug → adb install → logcat. LiteRT-LM only runs on real hardware.</div></div>
+      <div class="step"><div class="n">04 / SHIP</div><div class="h">GitHub Pages</div><div class="d">Pitch deck + this tech deck live under <span class="mono">/docs</span> on <span class="mono">main</span>.</div></div>
+    </div>
+  </section>
+
+  <!-- 3 ARCHITECTURE -->
+  <section class="slide" id="s3">
+    <div class="kicker">Architecture</div>
+    <h2>Four modules. One pipeline.</h2>
+    <div class="stack">
+      <div class="item"><div class="tag">:core</div><div class="body"><b>Pure Kotlin.</b> DOT × EU261 × card/business perks. No Android deps. Source of truth for dollar amounts — the LLM never invents money.</div></div>
+      <div class="item"><div class="tag">:llm</div><div class="body"><b>LiteRT-LM 0.13.</b> <span class="mono">LlmRationaleRunner</span> + CPU backend. Qwen2.5-0.5B-Instruct bundle (~9s gen on Pixel 8). Rules fallback if missing.</div></div>
+      <div class="item"><div class="tag">:app</div><div class="body"><b>Jetpack Compose / M3.</b> Assistant, filing coordinator, notifications, consent store, Integrations screen for MCP connectors.</div></div>
+      <div class="item"><div class="tag">backend/</div><div class="body"><b>Python host.</b> CLI + YAML corpus + pytest parity with <span class="mono">core</span>. Not bundled in the APK.</div></div>
+    </div>
+    <div class="flow">
+      <span class="box">GPS / matcher</span><span class="arr">→</span>
+      <span class="box hi">CompensationEngine</span><span class="arr">→</span>
+      <span class="box">Receipt UI</span><span class="arr">→</span>
+      <span class="box sky">FilingCoordinator</span>
+    </div>
+  </section>
+
+  <!-- 4 LOCAL LLM -->
+  <section class="slide" id="s4">
+    <div class="kicker">On-device <span class="acc">SMOL LLM</span></div>
+    <h2>Grounded copy, not grounded math.</h2>
+    <div class="cols">
+      <div class="col us">
+        <div class="who">LiteRT-LM · CPU</div>
+        <div class="big">Qwen2.5-0.5B-Instruct</div>
+        <ul>
+          <li>Filing cover notes & rejection analysis</li>
+          <li>Trip-plan narratives (Premium screen)</li>
+          <li>Claim rationales from structured facts</li>
+          <li><span class="mono">generate(prompt, system)</span> for assistant flows</li>
+        </ul>
+      </div>
+      <div class="col">
+        <div class="who">Gotchas we locked in</div>
+        <div class="big">Don't regress these</div>
+        <ul>
+          <li>Bundle must include <span class="mono">LlmMetadata</span></li>
+          <li>Non-empty <span class="mono">start_token</span> (Qwen: &lt;|im_start|&gt;)</li>
+          <li>GPU aborts — use <b>CPU only</b></li>
+          <li>Native SIGABRT can't be caught in Kotlin</li>
+        </ul>
+      </div>
+    </div>
+    <div class="codeblock">
+      <div class="bar">fallback chain · AssistantService</div>
+      <pre><span class="c">// cloud connector (opt-in) → on-device LiteRT → deterministic templates</span>
+<span class="k">connectors</span>?.generate(prompt, system) ?: llm.generate(prompt, system) ?: <span class="s">""</span></pre>
+    </div>
+  </section>
+
+  <!-- 5 MCP -->
+  <section class="slide" id="s5">
+    <div class="kicker">MCP &amp; cloud connectors</div>
+    <h2>Your phone in the agent mesh.</h2>
+    <div class="lead">Connectors are <b>off by default</b>, persisted in DataStore, and run under the <b>provider's own terms</b>. Zero extra dependencies — <span class="mono">HttpURLConnection</span> + <span class="mono">org.json</span> only.</div>
+    <div class="srclist">
+      <div class="row">
+        <div><div class="lbl">CLOUD_MODEL</div><div class="sub">OPENAI-COMPATIBLE CHAT/COMPLETIONS</div></div>
+        <div class="amt">BYO endpoint</div>
+      </div>
+      <div class="row">
+        <div><div class="lbl">MCP_TOOLS</div><div class="sub">JSON-RPC · INITIALIZE · TOOLS/LIST · TOOLS/CALL</div></div>
+        <div class="amt">SSE tolerant</div>
+      </div>
+    </div>
+    <div class="codeblock">
+      <div class="bar">probe · RemoteConnectorClient</div>
+      <pre>{ <span class="k">"jsonrpc"</span>: <span class="s">"2.0"</span>, <span class="k">"method"</span>: <span class="s">"tools/list"</span>, <span class="k">"id"</span>: 2 }</pre>
+    </div>
+  </section>
+
+  <!-- 6 CURSOR + GMAIL FLOW -->
+  <section class="slide" id="s6">
+    <div class="kicker">Flagship integration</div>
+    <h2>Cursor + Gmail + your phone.</h2>
+    <div class="lead">Because inference can stay on-device and the app exposes MCP, a desktop agent doesn't replace AeroDue — it <b>orchestrates</b> it.</div>
+    <div class="flow" style="margin-top:28px">
+      <span class="box sky">Cursor</span><span class="arr">↔</span>
+      <span class="box">Gmail MCP</span><span class="arr">→</span>
+      <span class="box hi">AeroDue phone</span><span class="arr">→</span>
+      <span class="box">Historical filings</span>
+    </div>
+    <div class="stack" style="margin-top:28px">
+      <div class="item"><div class="tag">Ingest</div><div class="body">Scan confirmations + disruption threads from Gmail. Reconstruct trips the traveler never claimed.</div></div>
+      <div class="item"><div class="tag">Assess</div><div class="body">Run <b>CompensationEngine</b> on-device. Stack DOT + EU261 + card insurance into one receipt.</div></div>
+      <div class="item"><div class="tag">File</div><div class="body"><b>FilingCoordinator</b> drafts cover notes (LLM), posts notifications, tracks rejections → analyze → refile.</div></div>
+    </div>
+  </section>
+
+  <!-- 7 FILING + PRIVACY -->
+  <section class="slide" id="s7">
+    <div class="kicker">Product hardening</div>
+    <h2>Filing, consent, plugins.</h2>
+    <div class="steps">
+      <div class="step"><div class="n">FILING</div><div class="h">Phases</div><div class="d">Filing paperwork… → Analyzing rejection… → Refiling appeal… with system notifications.</div></div>
+      <div class="step"><div class="n">CONSENT</div><div class="h">Opt-in GPS</div><div class="d">GPS + telemetry off by default. Powers premium routing flywheel only when accepted.</div></div>
+      <div class="step"><div class="n">PLUGINS</div><div class="h">Separate EULA</div><div class="d">Polymarket hedge stub — disabled, third-party terms, not core AeroDue.</div></div>
+      <div class="step"><div class="n">LEGAL</div><div class="h">Not a law firm</div><div class="d">Document prep + status tracking. User confirms every submission.</div></div>
+    </div>
+  </section>
+
+  <!-- 8 CLOSE -->
+  <section class="slide" id="s8">
+    <div class="kicker">Run it yourself</div>
+    <div class="logo" style="font-size:clamp(36px,5vw,72px)">Stack in one weekend.<br><span class="sky">Years to harden.</span></div>
+    <div class="lead">Rules engine + on-device LLM + MCP surface = a consumer app that still plays nice with Cursor, Claude Desktop, and your own cloud models.</div>
+    <div class="links">
+      <a href="https://github.com/K2/AeroDue">github.com/K2/AeroDue</a>
+      <a href="./ARCHITECTURE.md">ARCHITECTURE.md</a>
+      <a href="./MCP.md">MCP.md</a>
+      <a href="./flow.html">Product pitch →</a>
+    </div>
+    <div class="ticketstrip" style="margin-top:40px">
+      <div><span>BUILD</span>./gradlew :app:assembleDebug</div>
+      <div><span>MODEL</span>./scripts/push-model-to-device.sh</div>
+      <div><span>LOGS</span>adb logcat -s AeroDueLlm</div>
+    </div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="hint">← → / swipe / tap · N for notes</div>
+<div class="counter"><b id="cur">01</b> / <span id="tot">08</span></div>
+
+<div id="notes">
+  <div class="close">ESC to close</div>
+  <div class="nk" id="notesKicker">SPEAKER NOTES · SLIDE 01</div>
+  <h3 id="notesTitle"></h3>
+  <div class="body" id="notesBody"></div>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const tot=slides.length;
+  let i=0;
+  document.getElementById('tot').textContent=String(tot).padStart(2,'0');
+
+  const notes=[
+    {t:"Title — technical story",b:"Set the frame: this isn't a slide deck about market size — it's how the repo is actually put together, and that most of it was agent-assisted in Cursor.\n\nEmphasize <b>offline-first</b>: money math is Kotlin; the SMOL model only narrates and drafts."},
+    {t:"Cursor workflow",b:"Walk the four steps. The point for judges/engineers: we parallelized UI, MCP, filing, and docs without losing a single source of truth in <span class='mono'>:core</span>.\n\nMention multitask mode / background agents if your audience knows Cursor — it shortened the loop from idea → Pixel install."},
+    {t:"Architecture",b:"Hit each module once. The flow diagram at the bottom is the mental model: detection → engine → receipt → filing.\n\nIf asked about Chaquopy/Python-on-Android: the shipped app path is Kotlin-native; Python is host parity only."},
+    {t:"Local LLM",b:"Critical distinction: <b>grounded copy, not grounded math</b>. Show the fallback chain — cloud is opt-in, then LiteRT, then templates.\n\nIf demoing live: warmUp on IO, watch AeroDueLlm logcat, expect ~9s first token on Pixel class hardware."},
+    {t:"MCP connectors",b:"Two kinds, both user-supplied endpoints. Stress privacy: off by default, provider terms, data leaves device only when enabled.\n\nIntegrations screen: Test button runs probe — lists MCP tools or validates chat/completions."},
+    {t:"Cursor + Gmail + phone",b:"This is the 'why MCP matters' slide. Desktop agent reads Gmail; phone runs rules + optional on-device LLM; together they batch historical claims.\n\nSensitive parsing can stay on-device; cloud is orchestration, not ownership of the entitlement math."},
+    {t:"Filing + privacy",b:"Quick tour of the product hardening: phased filing with notifications, consent store, plugin boundary, not-a-legal-service disclaimer.\n\nConnect to freemium: telemetry opt-in feeds premium routing data."},
+    {t:"Close — run it",b:"Point to repo + markdown docs. Offer to open flow.html for the product pitch.\n\nCommands on the ticket strip are real — copy them for a live setup segment."}
+  ];
+
+  function go(n){
+    n=Math.max(0,Math.min(tot-1,n));
+    if(n===i) return;
+    slides[i].classList.remove('active'); i=n; slides[i].classList.add('active');
+    document.getElementById('cur').textContent=String(i+1).padStart(2,'0');
+    document.getElementById('progress').style.width=((i+1)/tot*100)+'%';
+    if(document.getElementById('notes').classList.contains('show')) renderNotes();
+  }
+  function renderNotes(){
+    document.getElementById('notesKicker').textContent='SPEAKER NOTES · SLIDE '+String(i+1).padStart(2,'0');
+    document.getElementById('notesTitle').textContent=notes[i].t;
+    document.getElementById('notesBody').innerHTML=notes[i].b;
+  }
+  function toggleNotes(){const n=document.getElementById('notes'); n.classList.toggle('show'); if(n.classList.contains('show')) renderNotes();}
+
+  document.getElementById('progress').style.width=(1/tot*100)+'%';
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(tot-1)}
+    else if(e.key.toLowerCase()==='n'){toggleNotes()}
+    else if(e.key==='Escape'){document.getElementById('notes').classList.remove('show')}
+  });
+  document.getElementById('stage').addEventListener('click',e=>{
+    if(e.target.closest('a,button')) return;
+    const x=e.clientX/innerWidth; go(x>0.5?i+1:i-1);
+  });
+  let tx=0,ty=0,tt=0;
+  addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;tt=Date.now();},{passive:true});
+  addEventListener('touchend',e=>{
+    if(document.getElementById('notes').classList.contains('show')) return;
+    const t=e.changedTouches[0];const dx=t.clientX-tx;const dy=t.clientY-ty;const dt=Date.now()-tt;
+    if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.6 && dt<700){ go(dx<0?i+1:i-1); }
+  },{passive:true});
+</script>
+</body>
+</html>
