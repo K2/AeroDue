@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comped — Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0A0F0D; --ink-2:#101614; --ink-3:#18201D;
+    --line:rgba(255,255,255,0.09); --line-2:rgba(255,255,255,0.18);
+    --fg:#EAF0ED; --fg-dim:#9AA6A1; --fg-faint:#5C6863;
+    --money:#3FCF8E; --money-glow:rgba(63,207,142,0.20);
+    --alert:#F5A623; --alert-bg:rgba(245,166,35,0.12); --alert-line:rgba(245,166,35,0.35);
+    --display:'Hanken Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden}
+  body{
+    background:var(--ink);color:var(--fg);font-family:var(--display);
+    font-feature-settings:"tnum" 1;-webkit-font-smoothing:antialiased;
+  }
+  /* atmosphere */
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(63,207,142,0.05),transparent 60%),
+               radial-gradient(900px 600px at -10% 110%,rgba(255,255,255,0.025),transparent 60%);}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  .stage{position:relative;width:100vw;height:100vh;z-index:1}
+  .slide{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(32px,7vw,110px);opacity:0;transform:translateY(14px) scale(0.995);
+    transition:opacity .5s ease,transform .5s ease;pointer-events:none;
+    overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .slide.active{opacity:1;transform:none;pointer-events:auto}
+
+  /* shared chrome */
+  .chrome-top{position:fixed;top:26px;left:clamp(32px,7vw,110px);right:clamp(32px,7vw,110px);
+    display:flex;justify-content:space-between;align-items:center;z-index:5;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--fg-faint);text-transform:uppercase}
+  .brandmark{display:flex;align-items:center;gap:9px;color:var(--fg-dim)}
+  .brandmark .dot{width:7px;height:7px;border-radius:50%;background:var(--money);box-shadow:0 0 10px var(--money-glow)}
+  .counter{position:fixed;bottom:24px;right:clamp(32px,7vw,110px);z-index:5;
+    font-family:var(--mono);font-size:12px;letter-spacing:.14em;color:var(--fg-faint)}
+  .counter b{color:var(--fg)}
+  .hint{position:fixed;bottom:24px;left:clamp(32px,7vw,110px);z-index:5;
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;color:var(--fg-faint);text-transform:uppercase}
+  .progress{position:fixed;bottom:0;left:0;height:2px;background:var(--money);z-index:6;
+    transition:width .5s ease;box-shadow:0 0 12px var(--money-glow)}
+
+  /* boarding pass divider */
+  .perf{position:relative;height:1px;border-top:1px dashed var(--line-2);margin:30px 0}
+  .perf::before,.perf::after{content:"";position:absolute;top:-7px;width:14px;height:14px;border-radius:50%;background:var(--ink)}
+  .perf::before{left:-7px}.perf::after{right:-7px}
+
+  .kicker{font-family:var(--mono);font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:26px}
+  .kicker .acc{color:var(--money)}
+  h1{font-size:clamp(40px,7vw,104px);font-weight:700;line-height:0.98;letter-spacing:-0.03em;max-width:18ch}
+  h2{font-size:clamp(30px,4.6vw,60px);font-weight:600;line-height:1.04;letter-spacing:-0.025em;max-width:20ch}
+  .lead{font-size:clamp(17px,1.7vw,23px);color:var(--fg-dim);line-height:1.5;max-width:50ch;margin-top:26px;font-weight:300}
+  .mono{font-family:var(--mono)}
+  .money{color:var(--money)}
+  .tnum{font-variant-numeric:tabular-nums}
+
+  /* title */
+  #s1 .logo{font-size:clamp(52px,9vw,128px);font-weight:800;letter-spacing:-0.04em;display:flex;align-items:center;gap:.22em}
+  #s1 .logo .pin{width:.16em;height:.16em;border-radius:50%;background:var(--money);box-shadow:0 0 28px 4px var(--money-glow);display:inline-block;margin-bottom:.12em}
+  #s1 .tag{font-size:clamp(19px,2.3vw,30px);font-weight:300;color:var(--fg-dim);margin-top:30px;max-width:26ch;line-height:1.35}
+  #s1 .tag b{color:var(--fg);font-weight:600}
+  .ticketstrip{margin-top:48px;display:flex;gap:0;font-family:var(--mono);font-size:12px;letter-spacing:.12em;
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;width:fit-content}
+  .ticketstrip div{padding:13px 20px;border-right:1px dashed var(--line-2);color:var(--fg-dim)}
+  .ticketstrip div:last-child{border-right:none}
+  .ticketstrip span{color:var(--fg-faint);display:block;font-size:9.5px;margin-bottom:5px;letter-spacing:.18em}
+
+  /* big stat */
+  .bigstat{font-size:clamp(110px,24vw,360px);font-weight:800;line-height:.82;letter-spacing:-0.05em}
+
+  /* hidden money rows */
+  .srclist{margin-top:38px;display:flex;flex-direction:column;gap:0;max-width:760px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .srclist .row{display:flex;align-items:baseline;justify-content:space-between;padding:22px 26px;border-bottom:1px dashed var(--line)}
+  .srclist .row:last-child{border-bottom:none}
+  .srclist .lbl{font-size:clamp(18px,2vw,26px);font-weight:500}
+  .srclist .sub{font-family:var(--mono);font-size:12px;color:var(--fg-faint);letter-spacing:.08em;margin-top:6px}
+  .srclist .amt{font-family:var(--mono);font-size:clamp(15px,1.5vw,19px);color:var(--fg-dim);text-align:right}
+
+  /* phone money-moment */
+  .demo-wrap{display:flex;gap:clamp(28px,5vw,80px);align-items:center;flex-wrap:wrap}
+  .phone{width:min(300px,84vw);flex:none;border:1px solid var(--line-2);border-radius:38px;background:var(--ink-2);padding:12px;
+    box-shadow:0 0 80px rgba(63,207,142,0.06)}
+  .screen{border-radius:28px;background:linear-gradient(180deg,var(--ink-3),var(--ink-2));padding:22px 20px;min-height:520px;display:flex;flex-direction:column}
+  .screen .nav{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;color:var(--fg-dim);margin-bottom:18px}
+  .alert{background:var(--alert-bg);border:1px solid var(--alert-line);border-radius:12px;padding:11px 13px;
+    display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--alert);font-weight:500;margin-bottom:24px}
+  .alert .pulse{width:8px;height:8px;border-radius:50%;background:var(--alert);animation:pulse 1.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+  .owed-lbl{font-size:13px;color:var(--fg-dim);margin-bottom:4px}
+  .owed{font-size:62px;font-weight:800;color:var(--money);letter-spacing:-0.03em;line-height:1;text-shadow:0 0 40px var(--money-glow)}
+  .receipt .ln{display:flex;align-items:flex-start;gap:11px;padding:14px 0;border-bottom:1px dashed var(--line)}
+  .receipt .ln:first-child{border-top:1px dashed var(--line-2);margin-top:22px}
+  .receipt .ic{width:30px;height:30px;border-radius:8px;background:var(--ink);display:flex;align-items:center;justify-content:center;font-size:14px;flex:none}
+  .receipt .ln .t{font-size:13.5px;font-weight:500}
+  .receipt .ln .s{font-family:var(--mono);font-size:10.5px;color:var(--fg-faint);margin-top:3px}
+  .receipt .ln .v{margin-left:auto;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--money)}
+  .filebtn{margin-top:auto;background:var(--money);color:#04130C;border:none;border-radius:13px;padding:15px;
+    font-family:var(--display);font-size:15px;font-weight:700;width:100%;cursor:pointer;letter-spacing:-0.01em}
+  .filenote{text-align:center;font-family:var(--mono);font-size:10px;color:var(--fg-faint);margin-top:11px;letter-spacing:.05em}
+  .demo-copy{flex:1;min-width:260px}
+  .demo-copy .cue{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--alert);border:1px solid var(--alert-line);border-radius:30px;padding:7px 14px;margin-top:26px}
+  .demo-copy .cue .pulse{width:7px;height:7px;border-radius:50%;background:var(--alert);animation:pulse 1.4s infinite}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px;max-width:1100px}
+  .step{border:1px solid var(--line);border-radius:14px;padding:24px 22px;background:var(--ink-2)}
+  .step .n{font-family:var(--mono);font-size:13px;color:var(--money);letter-spacing:.1em;margin-bottom:18px}
+  .step .h{font-size:21px;font-weight:600;margin-bottom:9px;letter-spacing:-0.01em}
+  .step .d{font-size:13.5px;color:var(--fg-dim);line-height:1.5;font-weight:300}
+
+  /* two-col compare */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:42px;max-width:1100px}
+  .col{border:1px solid var(--line);border-radius:16px;padding:32px 30px;background:var(--ink-2)}
+  .col.us{border-color:rgba(63,207,142,0.4);background:linear-gradient(180deg,rgba(63,207,142,0.06),transparent)}
+  .col .who{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--fg-faint);margin-bottom:18px}
+  .col.us .who{color:var(--money)}
+  .col .big{font-size:30px;font-weight:700;letter-spacing:-0.02em;line-height:1.15;margin-bottom:16px}
+  .col ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+  .col li{font-size:15px;color:var(--fg-dim);line-height:1.4;padding-left:20px;position:relative;font-weight:300}
+  .col li::before{content:"—";position:absolute;left:0;color:var(--fg-faint)}
+  .col.us li::before{content:"+";color:var(--money)}
+
+  /* model + moat lists */
+  .stack{margin-top:40px;display:flex;flex-direction:column;gap:16px;max-width:880px}
+  .stack .item{display:flex;gap:22px;align-items:baseline;padding:20px 24px;border:1px solid var(--line);border-radius:13px;background:var(--ink-2)}
+  .stack .item .tag{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--money);flex:none;width:130px}
+  .stack .item .body{font-size:16px;color:var(--fg);line-height:1.45;font-weight:300}
+  .stack .item .body b{font-weight:600}
+
+  /* objections */
+  .qa{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:36px;max-width:1180px}
+  .qa .card{border:1px solid var(--line);border-radius:14px;padding:24px 26px;background:var(--ink-2)}
+  .qa .q{font-size:17px;font-weight:600;letter-spacing:-0.01em;margin-bottom:12px;display:flex;gap:10px}
+  .qa .q .mk{color:var(--alert);font-family:var(--mono)}
+  .qa .a{font-size:14px;color:var(--fg-dim);line-height:1.5;font-weight:300}
+  .qa .a b{color:var(--fg);font-weight:600}
+
+  /* close */
+  #s11 .logo{font-size:clamp(40px,6vw,82px);font-weight:800;letter-spacing:-0.04em}
+  #s11 .one{font-size:clamp(24px,3vw,40px);font-weight:300;line-height:1.3;max-width:24ch;margin-top:24px}
+  #s11 .one b{font-weight:700;color:var(--money)}
+  #s11 .ask{margin-top:40px;font-family:var(--mono);font-size:14px;letter-spacing:.1em;color:var(--fg-dim)}
+
+  /* notes overlay */
+  #notes{position:fixed;inset:0;z-index:50;background:rgba(5,8,7,0.96);backdrop-filter:blur(8px);
+    display:none;flex-direction:column;padding:clamp(32px,7vw,90px);overflow:auto}
+  #notes.show{display:flex}
+  #notes .nk{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--money);margin-bottom:22px}
+  #notes h3{font-size:30px;font-weight:700;margin-bottom:24px;letter-spacing:-0.02em}
+  #notes .body{font-size:18px;line-height:1.7;color:var(--fg-dim);max-width:70ch;font-weight:300;white-space:pre-wrap}
+  #notes .body b{color:var(--fg);font-weight:600}
+  #notes .close{position:fixed;top:26px;right:30px;font-family:var(--mono);font-size:11px;letter-spacing:.16em;color:var(--fg-faint);text-transform:uppercase}
+
+  @media(max-width:760px){
+    .steps{grid-template-columns:repeat(2,1fr)}
+    .cols,.qa{grid-template-columns:1fr}
+    .stack .item{flex-direction:column;gap:8px}
+    .stack .item .tag{width:auto}
+    .slide{justify-content:flex-start;padding:78px 22px 84px}
+    .demo-wrap{justify-content:center;flex-direction:column}
+    .demo-copy{min-width:0}
+    .ticketstrip{flex-wrap:wrap;font-size:11px}
+    .ticketstrip div{padding:11px 15px}
+    h1{font-size:clamp(34px,9.5vw,104px)}
+    h2{font-size:clamp(26px,7vw,60px)}
+    .bigstat{font-size:clamp(96px,30vw,360px)}
+    .lead{margin-top:20px;font-size:16px}
+    .kicker{margin-bottom:18px}
+    .chrome-top{top:20px;left:22px;right:22px;font-size:10px}
+    .counter,.hint{bottom:18px}
+    .hint{left:22px}.counter{right:22px}
+    #notes{padding:70px 24px 40px}
+    #notes h3{font-size:24px}#notes .body{font-size:16px;line-height:1.6}
+  }
+  @media(max-width:460px){
+    .steps{grid-template-columns:1fr}
+    .srclist .row{flex-direction:column;gap:8px;align-items:flex-start}
+    .srclist .amt{text-align:left}
+    .owed{font-size:54px}
+    .hint{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="chrome-top">
+  <div class="brandmark"><span class="dot"></span>COMPED</div>
+  <div id="topright">BOARDING&nbsp;PASS&nbsp;·&nbsp;PITCH</div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- 1 TITLE -->
+  <section class="slide active" id="s1">
+    <div class="logo">Comped<span class="pin"></span></div>
+    <div class="tag">The money your flight owes you — <b>found, calculated, and filed.</b> Automatically.</div>
+    <div class="ticketstrip">
+      <div><span>FLIGHT</span>AA 108</div>
+      <div><span>STATUS</span>DELAYED 3:20</div>
+      <div><span>RECOVERED</span><span style="color:var(--money);font-size:12px;letter-spacing:0">$740.00</span></div>
+    </div>
+  </section>
+
+  <!-- 2 PROBLEM -->
+  <section class="slide" id="s2">
+    <div class="kicker">The problem</div>
+    <div class="bigstat tnum">1<span style="font-size:.4em;font-weight:600;color:var(--fg-dim)"> in </span>5</div>
+    <div class="lead">U.S. flights arrived <b style="color:var(--fg)">significantly late</b> last year. Almost none of those passengers collected a single dollar they were owed.</div>
+  </section>
+
+  <!-- 3 HIDDEN MONEY -->
+  <section class="slide" id="s3">
+    <div class="kicker">Why nobody collects</div>
+    <h2>The money exists. It's hidden across three systems no traveler tracks.</h2>
+    <div class="srclist">
+      <div class="row">
+        <div><div class="lbl">DOT automatic refund</div><div class="sub">US · 3H+ DOMESTIC / 6H+ INTL · ORIGINAL PAYMENT</div></div>
+        <div class="amt">full fare back</div>
+      </div>
+      <div class="row">
+        <div><div class="lbl">EU261 compensation</div><div class="sub">ANY EUROPE-TOUCHING FLIGHT · BY DISTANCE</div></div>
+        <div class="amt">up to €600</div>
+      </div>
+      <div class="row">
+        <div><div class="lbl">Card trip-delay insurance</div><div class="sub">SAPPHIRE · PLATINUM · VENTURE X · UNFILED</div></div>
+        <div class="amt">up to $500</div>
+      </div>
+    </div>
+    <div class="lead">Three rulebooks. Zero coordination. The burden sits on an exhausted traveler standing at a gate.</div>
+  </section>
+
+  <!-- 4 PRODUCT / MONEY MOMENT -->
+  <section class="slide" id="s4">
+    <div class="demo-wrap">
+      <div class="phone">
+        <div class="screen">
+          <div class="nav">‹ &nbsp;<span class="mono">AA 108</span></div>
+          <div class="alert"><span class="pulse"></span>Delayed 3h 20m — you qualify</div>
+          <div class="owed-lbl">You're owed</div>
+          <div class="owed tnum" id="owedNum">$0</div>
+          <div class="receipt">
+            <div class="ln"><div class="ic">✈</div><div><div class="t">DOT refund</div><div class="s">AMERICAN AIRLINES</div></div><div class="v">$247</div></div>
+            <div class="ln"><div class="ic">🌍</div><div><div class="t">EU261 comp</div><div class="s">EU PASSENGER RIGHT</div></div><div class="v">$413</div></div>
+            <div class="ln"><div class="ic">💳</div><div><div class="t">Trip delay</div><div class="s">CHASE SAPPHIRE</div></div><div class="v">$80</div></div>
+          </div>
+          <button class="filebtn">File all 3 claims ↗</button>
+          <div class="filenote">WE FILE. YOU GET PAID. NO WIN, NO FEE.</div>
+        </div>
+      </div>
+      <div class="demo-copy">
+        <div class="kicker">The product</div>
+        <h2 style="max-width:14ch">Forward one email. We do the rest.</h2>
+        <div class="lead">The itemized receipt is the whole pitch: every dollar, every source, no black box. This is the screenshot people post.</div>
+        <div class="cue"><span class="pulse"></span>Cut to live demo here</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 HOW IT WORKS -->
+  <section class="slide" id="s5">
+    <div class="kicker">How it works</div>
+    <h2>Zero effort after the first tap.</h2>
+    <div class="steps">
+      <div class="step"><div class="n">01 / FORWARD</div><div class="h">Connect once</div><div class="d">Forward a confirmation or link Gmail. No forms. That's the entire setup.</div></div>
+      <div class="step"><div class="n">02 / WATCH</div><div class="h">Always-on</div><div class="d">We monitor every trip in real time, quietly, in the background.</div></div>
+      <div class="step"><div class="n">03 / DETECT</div><div class="h">Cross-check</div><div class="d">A disruption hits our rules engine: DOT × EU261 × your card's terms, at once.</div></div>
+      <div class="step"><div class="n">04 / FILE</div><div class="h">One tap</div><div class="d">We draft, file, and chase every claim — then track it to paid.</div></div>
+    </div>
+  </section>
+
+  <!-- 6 WHY NOW -->
+  <section class="slide" id="s6">
+    <div class="kicker">Why <span class="acc">now</span></div>
+    <h1>The tailwind<br>just turned on.</h1>
+    <div class="lead">The DOT's automatic-refund rule is fully in effect as of 2026 — the regulatory awareness window is open, travelers still don't know their rights, and no one owns the US consumer experience yet. First mover takes the category.</div>
+  </section>
+
+  <!-- 7 MARKET / COMPETITION -->
+  <section class="slide" id="s7">
+    <div class="kicker">Market &amp; competition</div>
+    <h2 style="max-width:24ch">The leader is European, clunky, and looking the other way.</h2>
+    <div class="cols">
+      <div class="col">
+        <div class="who">AirHelp — incumbent</div>
+        <div class="big tnum">$150M rev · ~$450M val</div>
+        <ul>
+          <li>EU-first; built for EU261 fights</li>
+          <li>Takes 25–35% of your payout</li>
+          <li>Clunky, legalistic, no US consumer product</li>
+        </ul>
+      </div>
+      <div class="col us">
+        <div class="who">Comped — us</div>
+        <div class="big">US-first. Consumer-grade.</div>
+        <ul>
+          <li>Recovers the money that's never automatic</li>
+          <li>One forwarded email; beautiful UX</li>
+          <li>Aggregates all three systems in one receipt</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 BUSINESS MODEL -->
+  <section class="slide" id="s8">
+    <div class="kicker">How we make money</div>
+    <h2>Three streams. None of them tax the free stuff.</h2>
+    <div class="stack">
+      <div class="item"><div class="tag">Contingency</div><div class="body">A cut of the <b>non-automatic</b> recoveries — EU261 and escalated claims — where winning takes real work and a fee is fair.</div></div>
+      <div class="item"><div class="tag">Subscription</div><div class="body">A frequent-flyer membership (~$40–90/yr) for travelers who fly often and want everything watched, hands-off.</div></div>
+      <div class="item"><div class="tag">B2B2C engine</div><div class="body">License the recovery engine to <b>travel insurers, OTAs, and card issuers</b> as a retention feature — the long game.</div></div>
+    </div>
+  </section>
+
+  <!-- 9 MOAT -->
+  <section class="slide" id="s9">
+    <div class="kicker">The moat</div>
+    <h2 style="max-width:22ch">A weekend builds v1. Years build the one that's right.</h2>
+    <div class="stack">
+      <div class="item"><div class="tag">Rules engine</div><div class="body">Encodes DOT × EU261 distance bands × every card's specific terms — and stays current as regulations shift. The hard, unglamorous, defensible part.</div></div>
+      <div class="item"><div class="tag">Data flywheel</div><div class="body">Every claim teaches us <b>which airlines stall and which arguments win</b>. Recovery rates compound; new entrants start from zero.</div></div>
+      <div class="item"><div class="tag">Endgame</div><div class="body">Become the rails inside the card issuers and booking apps that already hold the itinerary and the payment — not another logo fighting for a keyword.</div></div>
+    </div>
+  </section>
+
+  <!-- 10 OBJECTIONS -->
+  <section class="slide" id="s10">
+    <div class="kicker">If you're about to ask…</div>
+    <div class="qa">
+      <div class="card"><div class="q"><span class="mk">Q</span>Isn't this just AirHelp?</div><div class="a">They're <b>EU-first</b> and fight for EU261. We're <b>US-first</b> and built on the money that's never automatic and never filed — card insurance, escalation, EU261 on top. Different geography, different money.</div></div>
+      <div class="card"><div class="q"><span class="mk">Q</span>Won't airlines just auto-refund now?</div><div class="a">That's why we <b>don't sell DOT refunds</b>. The DOT made the refund automatic — it did nothing about the compensation and insurance stacked on top, where 100% still goes unclaimed.</div></div>
+      <div class="card"><div class="q"><span class="mk">Q</span>Why won't Chase or Amex build it?</div><div class="a">Frictionless claims raise <b>their</b> payouts — they've kept the benefit clunky for a decade. We're aligned with the traveler. Our endgame is to license it to them as retention, not fight them.</div></div>
+      <div class="card"><div class="q"><span class="mk">Q</span>How do you make money if refunds are free?</div><div class="a">Contingency on the non-automatic recoveries, a frequent-flyer subscription, and licensing the engine B2B2C. <b>We never take a cut of money the law returns for free.</b></div></div>
+    </div>
+  </section>
+
+  <!-- 11 CLOSE -->
+  <section class="slide" id="s11">
+    <div class="logo">Comped<span style="color:var(--money)">.</span></div>
+    <div class="one">They get you money when prices drop.<br><b>We get you money when your flight falls apart.</b></div>
+    <div class="ask">BUILT THIS WEEKEND · US-FIRST · YOUR FLIGHT OWES YOU $740</div>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<div class="hint">← → / swipe / tap · press N for script</div>
+<div class="counter"><b id="cur">01</b> / <span id="tot">11</span></div>
+
+<div id="notes">
+  <div class="close">ESC to close</div>
+  <div class="nk" id="notesKicker">SPEAKER NOTES · SLIDE 01</div>
+  <h3 id="notesTitle"></h3>
+  <div class="body" id="notesBody"></div>
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const tot=slides.length;
+  let i=0, owedDone=false;
+  document.getElementById('tot').textContent=String(tot).padStart(2,'0');
+
+  const notes=[
+    {t:"Opening — the 60-second pitch",b:"Deliver this verbatim, calm and confident, then advance.\n\n“Last year, <b>one in five</b> U.S. flights arrived significantly late. Almost none of those passengers collected a dollar — not because the money wasn't there, but because it's hidden across three systems nobody tracks.\n\nThe DOT now forces automatic refunds. EU261 pays up to 600 euros on your Europe flights. And your credit card's trip-delay insurance sits unused, because filing it is miserable.\n\nComped fixes that with <b>one action</b>: you forward your confirmation once. We watch every flight, and the second something goes wrong, we calculate everything you're owed across all three systems — and file it for you.\n\nAirHelp built a 450-million-dollar company doing a clunky version of this in Europe. We're building the beautiful version, US-first, and we're starting now.”"},
+    {t:"The problem",b:"Land the stat hard, then pause. “One in five. And the reason they don't collect isn't apathy — it's that the system is <b>intentionally opaque</b>. Airlines benefit from your confusion.” Keep it short; the number does the work."},
+    {t:"Why nobody collects",b:"Walk the three rows top to bottom. “Three separate rulebooks — federal, European, and your own credit card — none of which talk to each other. Knowing you're owed money from all three, at once, the moment a flight breaks? Nobody does that in their head at a gate.” This sets up why aggregation is the product."},
+    {t:"The product — THE DEMO",b:"<b>This is the moment of the whole pitch.</b> Say: “Here's what it looks like.” Then <b>switch to your live demo</b> — start on the calm home screen, trigger the delay, and let the $740 count up in front of them. Let silence do the work as the number climbs.\n\nIf the live demo fails, this slide is your backup — the $740 counts up here too. Then: “Every dollar, every source, no black box. That itemized receipt is the thing people screenshot and post — that's our distribution.”"},
+    {t:"How it works",b:"Fast. “Four steps, and the user only does the first one. Forward. Watch. Detect. File. After that first tap, they never lift a finger again — we even chase it to paid.” Emphasize <b>zero effort</b> — that's the wedge against clunky incumbents."},
+    {t:"Why now",b:"“Timing is everything here. The DOT rule went fully into effect this year. Travelers still don't know their rights, awareness is at an all-time high, and <b>no one owns the US consumer experience yet</b>. This window doesn't stay open.”"},
+    {t:"Market & competition",b:"Be honest and confident. “AirHelp is the leader — 150 million in revenue, roughly a 450-million valuation. But they're European, they're built for legal fights, they take up to 35%, and they have no real US consumer product. They just raised PE money to come here — which tells you the US market is real. We're already native to it.”"},
+    {t:"Business model",b:"“We make money three ways — and notice what's missing: we never take a cut of the DOT refund the law already returns for free. Contingency on the hard-won stuff, a subscription for frequent flyers, and licensing the engine to insurers and card issuers. That last one is the venture-scale outcome.”"},
+    {t:"The moat",b:"“Anyone can build a demo this weekend — we did. What you can't copy quickly is the rules engine kept current across every jurisdiction and card, and the data on which airlines stall and which arguments win. That compounds. And the endgame is becoming the rails inside the companies that already hold your itinerary.”"},
+    {t:"Objections",b:"Optional slide — best used in Q&A or if judges look skeptical. You can also skip it live and let it sit in the deck as proof you've seen the whole board. Hit whichever question they're clearly thinking. Keep each answer to one breath."},
+    {t:"Close",b:"Land the one-liner slowly: “They get you money when prices drop. <b>We get you money when your flight falls apart.</b>” Pause. Then the ask: who you are, that it's built, and what you want from them. End on the $740 — the number they'll remember."}
+  ];
+
+  function animateOwed(){
+    const el=document.getElementById('owedNum'); if(!el) return;
+    owedDone=true; let v=0; const target=740; const dur=1300; const t0=performance.now();
+    function tick(now){
+      const p=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-p,3);
+      el.textContent='$'+Math.round(target*e); if(p<1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  function resetOwed(){const el=document.getElementById('owedNum'); if(el){el.textContent='$0'; owedDone=false;}}
+
+  function go(n){
+    n=Math.max(0,Math.min(tot-1,n));
+    if(n===i) return;
+    if(i===3) resetOwed();
+    slides[i].classList.remove('active'); i=n; slides[i].classList.add('active');
+    document.getElementById('cur').textContent=String(i+1).padStart(2,'0');
+    document.getElementById('progress').style.width=((i+1)/tot*100)+'%';
+    if(i===3 && !owedDone) setTimeout(animateOwed,360);
+    if(document.getElementById('notes').classList.contains('show')) renderNotes();
+  }
+  function renderNotes(){
+    document.getElementById('notesKicker').textContent='SPEAKER NOTES · SLIDE '+String(i+1).padStart(2,'0');
+    document.getElementById('notesTitle').textContent=notes[i].t;
+    document.getElementById('notesBody').innerHTML=notes[i].b;
+  }
+  function toggleNotes(){const n=document.getElementById('notes'); n.classList.toggle('show'); if(n.classList.contains('show')) renderNotes();}
+
+  document.getElementById('progress').style.width=(1/tot*100)+'%';
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1)}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1)}
+    else if(e.key==='Home'){go(0)} else if(e.key==='End'){go(tot-1)}
+    else if(e.key.toLowerCase()==='n'){toggleNotes()}
+    else if(e.key==='Escape'){document.getElementById('notes').classList.remove('show')}
+  });
+  // click right half = next, left = prev (ignore on notes / buttons)
+  document.getElementById('stage').addEventListener('click',e=>{
+    if(e.target.closest('button')) return;
+    const x=e.clientX/innerWidth; go(x>0.5?i+1:i-1);
+  });
+  document.querySelector('.filebtn').addEventListener('click',()=>go(i+1));
+
+  // touch swipe: horizontal = navigate, vertical = let it scroll
+  let tx=0,ty=0,tt=0;
+  addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;tt=Date.now();},{passive:true});
+  addEventListener('touchend',e=>{
+    if(document.getElementById('notes').classList.contains('show')) return;
+    const t=e.changedTouches[0];const dx=t.clientX-tx;const dy=t.clientY-ty;const dt=Date.now()-tt;
+    if(Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.6 && dt<700){ go(dx<0?i+1:i-1); }
+  },{passive:true});
+</script>
+</body>
+</html>
