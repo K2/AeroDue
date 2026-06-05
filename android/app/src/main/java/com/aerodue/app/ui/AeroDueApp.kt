@@ -2,19 +2,22 @@ package com.aerodue.app.ui
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.CardGiftcard
-import androidx.compose.material.icons.filled.Flight
-import androidx.compose.material.icons.filled.Gavel
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.automirrored.outlined.ReceiptLong
+import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.CreditCard
+import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -45,17 +48,21 @@ fun AeroDueApp() {
     val showBottomBar = current?.route != Route.Auth.path
 
     val bottomItems = listOf(
-        Triple(Route.Home, "Trip", Icons.Default.Home),
-        Triple(Route.Coverage, "Coverage", Icons.Default.CardGiftcard),
-        Triple(Route.Claims, "Claims", Icons.Default.Flight),
-        Triple(Route.Regulations, "Rules", Icons.Default.Gavel),
-        Triple(Route.Profile, "Profile", Icons.Default.AccountCircle),
+        Triple(Route.Home, "Trip", Icons.Outlined.Home),
+        Triple(Route.Coverage, "Coverage", Icons.Outlined.CreditCard),
+        Triple(Route.Claims, "Claims", Icons.AutoMirrored.Outlined.ReceiptLong),
+        Triple(Route.Regulations, "Rules", Icons.Outlined.Gavel),
+        Triple(Route.Profile, "Profile", Icons.Outlined.AccountCircle),
     )
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
+                NavigationBar(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 3.dp,
+                ) {
                     bottomItems.forEach { (route, label, icon) ->
                         val selected = current?.hierarchy?.any { it.route == route.path } == true
                         NavigationBarItem(
@@ -70,7 +77,14 @@ fun AeroDueApp() {
                                 }
                             },
                             icon = { Icon(icon, contentDescription = label) },
-                            label = { Text(label) },
+                            label = { Text(label, style = MaterialTheme.typography.labelMedium) },
+                            colors = NavigationBarItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                indicatorColor = MaterialTheme.colorScheme.primaryContainer,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            ),
                         )
                     }
                 }

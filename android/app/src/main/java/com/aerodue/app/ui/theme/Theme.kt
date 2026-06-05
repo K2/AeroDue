@@ -1,30 +1,87 @@
 package com.aerodue.app.ui.theme
 
+import android.app.Activity
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-
-private val SkyBlue = Color(0xFF4FC3F7)
-private val Navy = Color(0xFF1B3A5C)
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 private val LightColors = lightColorScheme(
-    primary = Navy,
-    secondary = SkyBlue,
-    tertiary = Color(0xFF2E7D32),
+    primary = Indigo700,
+    onPrimary = Cloud,
+    primaryContainer = Color(0xFFD9E4FB),
+    onPrimaryContainer = Indigo900,
+    secondary = Sky500,
+    onSecondary = Ink900,
+    secondaryContainer = Color(0xFFD4F1FE),
+    onSecondaryContainer = Color(0xFF06324A),
+    tertiary = Money600,
+    onTertiary = Cloud,
+    tertiaryContainer = Color(0xFFCDF3E4),
+    onTertiaryContainer = Color(0xFF053D2B),
+    error = Rose500,
+    onError = Cloud,
+    background = Mist50,
+    onBackground = Ink900,
+    surface = Cloud,
+    onSurface = Ink900,
+    surfaceVariant = Mist100,
+    onSurfaceVariant = Ink500,
+    outline = Color(0xFFCBD5E1),
+    outlineVariant = Color(0xFFE2E8F0),
 )
 
 private val DarkColors = darkColorScheme(
-    primary = SkyBlue,
-    secondary = Navy,
-    tertiary = Color(0xFF81C784),
+    primary = Sky400,
+    onPrimary = Indigo900,
+    primaryContainer = Indigo700,
+    onPrimaryContainer = Color(0xFFD9E4FB),
+    secondary = Sky300,
+    onSecondary = Indigo900,
+    secondaryContainer = Indigo800,
+    onSecondaryContainer = Sky300,
+    tertiary = Money400,
+    onTertiary = Color(0xFF053D2B),
+    tertiaryContainer = Color(0xFF0B5C42),
+    onTertiaryContainer = Color(0xFFCDF3E4),
+    error = Rose300,
+    onError = Color(0xFF3A0512),
+    background = Night,
+    onBackground = Color(0xFFE6ECF7),
+    surface = NightSurface,
+    onSurface = Color(0xFFE6ECF7),
+    surfaceVariant = NightSurfaceHigh,
+    onSurfaceVariant = Color(0xFF9FB0CC),
+    outline = NightLine,
+    outlineVariant = Color(0xFF1B2741),
 )
 
 @Composable
-fun AeroDueTheme(content: @Composable () -> Unit) {
+fun AeroDueTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    content: @Composable () -> Unit,
+) {
+    val colorScheme = if (darkTheme) DarkColors else LightColors
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            val controller = WindowCompat.getInsetsController(window, view)
+            controller.isAppearanceLightStatusBars = colorScheme.background.luminance() > 0.5f
+            controller.isAppearanceLightNavigationBars = colorScheme.background.luminance() > 0.5f
+        }
+    }
+
     MaterialTheme(
-        colorScheme = LightColors,
+        colorScheme = colorScheme,
+        typography = AeroDueTypography,
+        shapes = AeroDueShapes,
         content = content,
     )
 }
