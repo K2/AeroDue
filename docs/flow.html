@@ -13,6 +13,7 @@
     --line:rgba(255,255,255,0.09); --line-2:rgba(255,255,255,0.18);
     --fg:#EAF0ED; --fg-dim:#9AA6A1; --fg-faint:#5C6863;
     --money:#3FCF8E; --money-glow:rgba(63,207,142,0.20);
+    --sky:#38BDF8;
     --alert:#F5A623; --alert-bg:rgba(245,166,35,0.12); --alert-line:rgba(245,166,35,0.35);
     --display:'Hanken Grotesk',sans-serif; --mono:'JetBrains Mono',monospace;
   }
@@ -112,6 +113,19 @@
     text-transform:uppercase;color:var(--alert);border:1px solid var(--alert-line);border-radius:30px;padding:7px 14px;margin-top:26px}
   .demo-copy .cue .pulse{width:7px;height:7px;border-radius:50%;background:var(--alert);animation:pulse 1.4s infinite}
 
+  /* real app screenshots */
+  .phone-shot{width:min(280px,78vw);flex:none;border-radius:32px;border:1px solid var(--line-2);
+    box-shadow:0 0 80px rgba(63,207,142,0.08),0 24px 48px rgba(0,0,0,0.45);overflow:hidden;background:#000}
+  .phone-shot img{display:block;width:100%;height:auto;vertical-align:middle}
+  .shot-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(14px,2.5vw,28px);
+    margin-top:36px;max-width:min(920px,100%)}
+  .shot-card{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--ink-2);
+    display:flex;flex-direction:column}
+  .shot-card img{display:block;width:100%;height:auto}
+  .shot-card .cap{padding:12px 16px 14px;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--fg-faint);border-top:1px dashed var(--line)}
+  .shot-card .cap b{color:var(--money);font-weight:600}
+
   /* steps */
   .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px;max-width:1100px}
   .step{border:1px solid var(--line);border-radius:14px;padding:24px 22px;background:var(--ink-2)}
@@ -189,6 +203,7 @@
     .srclist .amt{text-align:left}
     .owed{font-size:54px}
     .hint{display:none}
+    .shot-grid{grid-template-columns:1fr;max-width:320px;margin-left:auto;margin-right:auto}
   }
 </style>
 </head>
@@ -244,26 +259,38 @@
   <!-- 4 PRODUCT / MONEY MOMENT -->
   <section class="slide" id="s4">
     <div class="demo-wrap">
-      <div class="phone">
-        <div class="screen">
-          <div class="nav">‹ &nbsp;<span class="mono">AA 108</span></div>
-          <div class="alert"><span class="pulse"></span>Delayed 3h 20m — you qualify</div>
-          <div class="owed-lbl">You're owed</div>
-          <div class="owed tnum" id="owedNum">$0</div>
-          <div class="receipt">
-            <div class="ln"><div class="ic">✈</div><div><div class="t">DOT refund</div><div class="s">AMERICAN AIRLINES</div></div><div class="v">$247</div></div>
-            <div class="ln"><div class="ic">🌍</div><div><div class="t">EU261 comp</div><div class="s">EU PASSENGER RIGHT</div></div><div class="v">$413</div></div>
-            <div class="ln"><div class="ic">💳</div><div><div class="t">Trip delay</div><div class="s">CHASE SAPPHIRE</div></div><div class="v">$80</div></div>
-          </div>
-          <button class="filebtn">File all 3 claims ↗</button>
-          <div class="filenote">WE FILE. YOU GET PAID. NO WIN, NO FEE.</div>
-        </div>
+      <div class="phone-shot">
+        <img src="assets/compensation-receipt.png" alt="Compensation receipt: $750 across 3 stacked sources" width="390" height="844">
       </div>
       <div class="demo-copy">
         <div class="kicker">The product</div>
         <h2 style="max-width:14ch">Forward one email. We do the rest.</h2>
-        <div class="lead">The itemized receipt is the whole pitch: every dollar, every source, no black box. This is the screenshot people post.</div>
-        <div class="cue"><span class="pulse"></span>Cut to live demo here</div>
+        <div class="lead"><b class="money tnum" id="owedNum">$750</b> across three stacked sources — DOT, card insurance, corporate policy. Every dollar itemized; estimated on-device. This is the screenshot people post.</div>
+        <div class="cue"><span class="pulse"></span>Live app · built with Cursor at the hackathon</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4b APP GALLERY -->
+  <section class="slide" id="s4b">
+    <div class="kicker">Shipped at the hackathon · <span class="acc">built with Cursor</span></div>
+    <h2 style="max-width:22ch">Not a mock — the Android app in this repo.</h2>
+    <div class="shot-grid">
+      <div class="shot-card">
+        <img src="assets/trip-recovery.png" alt="Trip screen: delay detected, three compensation paths" width="390" height="844" loading="lazy">
+        <div class="cap"><b>Trip</b> · delay detected · 3 paths</div>
+      </div>
+      <div class="shot-card">
+        <img src="assets/compensation-receipt.png" alt="Compensation receipt" width="390" height="844" loading="lazy">
+        <div class="cap"><b>Receipt</b> · stacked sources</div>
+      </div>
+      <div class="shot-card">
+        <img src="assets/claims-filing.png" alt="Claims: file and track to paid" width="390" height="844" loading="lazy">
+        <div class="cap"><b>Claims</b> · file through to paid</div>
+      </div>
+      <div class="shot-card">
+        <img src="assets/premium-optimizer.png" alt="Premium door-to-door optimizer" width="390" height="844" loading="lazy">
+        <div class="cap"><b>Premium</b> · door-to-door re-plan</div>
       </div>
     </div>
   </section>
@@ -350,14 +377,14 @@
   <section class="slide" id="s11">
     <div class="logo">Comped<span style="color:var(--money)">.</span></div>
     <div class="one">They get you money when prices drop.<br><b>We get you money when your flight falls apart.</b></div>
-    <div class="ask">BUILT THIS WEEKEND · US-FIRST · YOUR FLIGHT OWES YOU $740</div>
+    <div class="ask">BUILT WITH CURSOR AT THE HACKATHON · US-FIRST · YOUR FLIGHT PROBABLY OWES YOU MONEY</div>
   </section>
 
 </div>
 
 <div class="progress" id="progress"></div>
 <div class="hint">← → / swipe / tap · press N for script</div>
-<div class="counter"><b id="cur">01</b> / <span id="tot">11</span></div>
+<div class="counter"><b id="cur">01</b> / <span id="tot">12</span></div>
 
 <div id="notes">
   <div class="close">ESC to close</div>
@@ -369,14 +396,15 @@
 <script>
   const slides=[...document.querySelectorAll('.slide')];
   const tot=slides.length;
-  let i=0, owedDone=false;
+  let i=0;
   document.getElementById('tot').textContent=String(tot).padStart(2,'0');
 
   const notes=[
     {t:"Opening — the 60-second pitch",b:"Deliver this verbatim, calm and confident, then advance.\n\n“Last year, <b>one in five</b> U.S. flights arrived significantly late. Almost none of those passengers collected a dollar — not because the money wasn't there, but because it's hidden across three systems nobody tracks.\n\nThe DOT now forces automatic refunds. EU261 pays up to 600 euros on your Europe flights. And your credit card's trip-delay insurance sits unused, because filing it is miserable.\n\nComped fixes that with <b>one action</b>: you forward your confirmation once. We watch every flight, and the second something goes wrong, we calculate everything you're owed across all three systems — and file it for you.\n\nAirHelp built a 450-million-dollar company doing a clunky version of this in Europe. We're building the beautiful version, US-first, and we're starting now.”"},
     {t:"The problem",b:"Land the stat hard, then pause. “One in five. And the reason they don't collect isn't apathy — it's that the system is <b>intentionally opaque</b>. Airlines benefit from your confusion.” Keep it short; the number does the work."},
     {t:"Why nobody collects",b:"Walk the three rows top to bottom. “Three separate rulebooks — federal, European, and your own credit card — none of which talk to each other. Knowing you're owed money from all three, at once, the moment a flight breaks? Nobody does that in their head at a gate.” This sets up why aggregation is the product."},
-    {t:"The product — THE DEMO",b:"<b>This is the moment of the whole pitch.</b> Say: “Here's what it looks like.” Then <b>switch to your live demo</b> — start on the calm home screen, trigger the delay, and let the $740 count up in front of them. Let silence do the work as the number climbs.\n\nIf the live demo fails, this slide is your backup — the $740 counts up here too. Then: “Every dollar, every source, no black box. That itemized receipt is the thing people screenshot and post — that's our distribution.”"},
+    {t:"The product — THE DEMO",b:"<b>This is the moment of the whole pitch.</b> Point at the real screenshot: “$750 across three stacked sources — DOT, Chase trip delay, corporate policy — calculated on-device, every source shown.”\n\nSay: “This isn't a Figma mock. We built it with <b>Cursor at the hackathon</b> — Kotlin rules engine, Compose UI, on-device LLM.” If you have the phone, <b>switch to live demo</b> on the same Claims screen.\n\nClose with: “That itemized receipt is what people screenshot and post — that's our distribution.”"},
+    {t:"App gallery — hackathon build",b:"Optional — use if judges want proof it's real. Walk the four tiles quickly: Trip detects the delay and paths; Receipt stacks entitlements; Claims files and tracks to paid; Premium is the upsell optimizer.\n\nOne line: “All of this is in the GitHub repo — built with Cursor agents in one hackathon session.”"},
     {t:"How it works",b:"Fast. “Four steps, and the user only does the first one. Forward. Watch. Detect. File. After that first tap, they never lift a finger again — we even chase it to paid.” Emphasize <b>zero effort</b> — that's the wedge against clunky incumbents."},
     {t:"Why now",b:"“Timing is everything here. The DOT rule went fully into effect this year. Travelers still don't know their rights, awareness is at an all-time high, and <b>no one owns the US consumer experience yet</b>. This window doesn't stay open.”"},
     {t:"Market & competition",b:"Be honest and confident. “AirHelp is the leader — 150 million in revenue, roughly a 450-million valuation. But they're European, they're built for legal fights, they take up to 35%, and they have no real US consumer product. They just raised PE money to come here — which tells you the US market is real. We're already native to it.”"},
@@ -386,25 +414,12 @@
     {t:"Close",b:"Land the one-liner slowly: “They get you money when prices drop. <b>We get you money when your flight falls apart.</b>” Pause. Then the ask: who you are, that it's built, and what you want from them. End on the $740 — the number they'll remember."}
   ];
 
-  function animateOwed(){
-    const el=document.getElementById('owedNum'); if(!el) return;
-    owedDone=true; let v=0; const target=740; const dur=1300; const t0=performance.now();
-    function tick(now){
-      const p=Math.min(1,(now-t0)/dur); const e=1-Math.pow(1-p,3);
-      el.textContent='$'+Math.round(target*e); if(p<1) requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-  }
-  function resetOwed(){const el=document.getElementById('owedNum'); if(el){el.textContent='$0'; owedDone=false;}}
-
   function go(n){
     n=Math.max(0,Math.min(tot-1,n));
     if(n===i) return;
-    if(i===3) resetOwed();
     slides[i].classList.remove('active'); i=n; slides[i].classList.add('active');
     document.getElementById('cur').textContent=String(i+1).padStart(2,'0');
     document.getElementById('progress').style.width=((i+1)/tot*100)+'%';
-    if(i===3 && !owedDone) setTimeout(animateOwed,360);
     if(document.getElementById('notes').classList.contains('show')) renderNotes();
   }
   function renderNotes(){
@@ -427,8 +442,6 @@
     if(e.target.closest('button')) return;
     const x=e.clientX/innerWidth; go(x>0.5?i+1:i-1);
   });
-  document.querySelector('.filebtn').addEventListener('click',()=>go(i+1));
-
   // touch swipe: horizontal = navigate, vertical = let it scroll
   let tx=0,ty=0,tt=0;
   addEventListener('touchstart',e=>{const t=e.changedTouches[0];tx=t.clientX;ty=t.clientY;tt=Date.now();},{passive:true});

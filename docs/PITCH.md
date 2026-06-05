@@ -25,7 +25,7 @@ This repo is the **Cursor hackathon** submission: a live Android app built with
 0. [Hackathon — Built with Cursor](#hackathon)
 1. [Title — Get back what flying owes you](#slide-1)
 2. [The pain — hundreds left unclaimed](#slide-2)
-3. [Free money — the stacked receipt](#slide-3)
+3. [Free money — the stacked receipt](#slide-3) · screenshots in [flow.html](flow.html) slides 4–5
 4. [Freemium — the data flywheel](#slide-4)
 5. [The superpower — offline LLM + MCP](#slide-5)
 6. [Compliance & trust](#slide-6)
