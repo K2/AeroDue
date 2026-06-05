@@ -3,8 +3,26 @@
 A navigable, demo-ready deck. Use the index to jump, or the prev/next links at
 the bottom of each slide.
 
+**Also:** [Product deck (HTML)](flow.html) · [Technical deck — built with Cursor (HTML)](tech.html) · [README screenshots](../README.md#screenshots-hackathon-build)
+
+## Built with Cursor (hackathon) {#hackathon}
+
+This repo is the **Cursor hackathon** submission: a live Android app built with
+**Cursor agents** driving implementation across `android/core`, `android/app`,
+`android/llm`, MCP connectors, and `backend/` parity — not a slide-deck prototype.
+
+| Screen | What it shows |
+|--------|----------------|
+| [Compensation receipt](assets/compensation-receipt.png) | **$750 across 3 stacked sources** — DOT, Chase trip delay, corporate policy — estimated on-device |
+| [Trip recovery](assets/trip-recovery.png) | Delay detected (7h30m), three compensation paths, rules + optional Qwen LLM |
+| [Claims filing](assets/claims-filing.png) | Itemized claims, confidence, advance to paid / simulate rejection |
+| [Premium optimizer](assets/premium-optimizer.png) | Door-to-door re-plan: flight, hotel hold, ground — on-device agent |
+
+**One line:** *They get you money when prices drop. We get you money when your flight falls apart.*
+
 ## Slide index {#index}
 
+0. [Hackathon — Built with Cursor](#hackathon)
 1. [Title — Get back what flying owes you](#slide-1)
 2. [The pain — hundreds left unclaimed](#slide-2)
 3. [Free money — the stacked receipt](#slide-3)
@@ -17,15 +35,18 @@ the bottom of each slide.
 
 ## Slide 1 — Get back what flying owes you {#slide-1}
 
-# ✈️ AeroDue
+# ✈️ AeroDue / Comped
 
-**Privacy-first, on-device flight disruption compensation recovery.**
+**Get paid when your flight falls apart.**
 
-> One tap after a delay → a receipt of *everything* you're owed, filed for you.
+> Forward once → watch → detect → file. After the first tap, we chase it to paid.
 
 AeroDue stacks **US DOT refunds + EU261 compensation + credit-card trip-delay
-insurance** into a single number, prepares the paperwork, and follows up on
-rejections — all on your phone.
+insurance** into a single **compensation receipt** (every source shown, no black
+box), prepares the paperwork, and follows up on rejections — all on your phone.
+
+Built **with Cursor at the hackathon** — see [Hackathon](#hackathon) and
+[tech.html](tech.html).
 
 [Index](#index) · [Next →](#slide-2)
 

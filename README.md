@@ -1,27 +1,42 @@
 # AeroDue
 
-**Privacy-first, on-device flight disruption compensation recovery.**
+**Get paid when your flight falls apart** — privacy-first, on-device compensation recovery.
 
-AeroDue figures out *everything* a traveler is owed after a flight delay or
-cancellation and stacks it across three independent sources — **US DOT refunds**,
-**EU261 compensation**, and **credit-card trip-delay insurance** — then renders the
-result as a plain-language **receipt of money owed**. It prepares the filing
-paperwork, files on your confirmation, and follows up on rejections
-(analyze → refile/appeal).
+> **Built with [Cursor](https://cursor.com) at the Cursor hackathon.** We shipped a working Android app end-to-end in one session: Kotlin rules engine, Jetpack Compose UI, on-device Qwen via LiteRT-LM, MCP connectors, and filing flows — with agents exploring the repo, implementing module-by-module, and keeping `android/core` aligned with the Python parity backend. See the [technical deck](docs/tech.html) for how we used Cursor as the factory floor.
+
+**Product name in the app:** *Comped* (this repo: **AeroDue**).
+
+### 30-second pitch
+
+Get paid when your flight falls apart — without chasing three different rulebooks.
+
+Most travelers never collect. **US DOT refunds**, **EU261** (up to €600), and your card’s **trip-delay insurance** can stack, but nobody connects them or files while you’re stuck at the gate.
+
+Forward your confirmation once. We **watch** every flight, **detect** disruptions, **calculate** everything you’re owed across all three systems, and **file** it for you — through to paid. Every dollar itemized; no black box.
+
+*They get you money when prices drop. We get you money when your flight falls apart.*
 
 > AeroDue is **not a legal service.** It automates document preparation and
 > status tracking; you submit and confirm every step. See
 > [docs/COMPENSATION_RULES.md](docs/COMPENSATION_RULES.md#not-legal-advice).
 
+### Screenshots (hackathon build)
+
+| Compensation receipt — stacked sources | Trip — delay detected, paths found |
+|:---:|:---:|
+| ![Compensation receipt](docs/assets/compensation-receipt.png) | ![Trip recovery](docs/assets/trip-recovery.png) |
+
+| Claims — file and track to paid | Premium — door-to-door optimizer |
+|:---:|:---:|
+| ![Claims filing](docs/assets/claims-filing.png) | ![Premium optimizer](docs/assets/premium-optimizer.png) |
+
+Interactive pitch decks: **[Product (Comped)](docs/flow.html)** · **[Technical (Cursor + LLM + MCP)](docs/tech.html)** · **[PITCH.md](docs/PITCH.md)**
+
 ## Why it exists
 
-- Airlines and insurers make claims deliberately painful, so most travelers
-  leave **hundreds of dollars unclaimed** after a disruption.
-- AeroDue automates the boring/hard parts: detecting the disruption, computing
-  entitlements across DOT + EU261 + card insurance, preparing the paperwork, and
-  chasing rejections.
-- The rebates go **directly back to the consumer**. Recovering this money is the
-  free tier — there is no cut taken from your refund.
+- Last year, **one in five** U.S. flights arrived significantly late; almost none of those passengers collected — not because the money wasn’t there, but because it’s hidden across **three systems nobody tracks**.
+- AeroDue automates the boring/hard parts: detecting the disruption, computing entitlements across DOT + EU261 + card insurance, preparing the paperwork, and chasing rejections.
+- The rebates go **directly back to the consumer**. Recovering statutory DOT refunds is the free tier — we don’t take a cut of money the law already returns.
 
 ## Freemium model
 
@@ -127,10 +142,13 @@ Full wire formats and a sequence walkthrough are in [docs/MCP.md](docs/MCP.md).
 
 ## Documentation
 
+- [docs/index.html](docs/index.html) — docs hub (pitch + technical decks)
+- [docs/flow.html](docs/flow.html) — **Comped** product pitch (hackathon)
+- [docs/tech.html](docs/tech.html) — **Built with Cursor** technical story
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — modules, data flow, LLM fallback chain
 - [docs/MCP.md](docs/MCP.md) — connector framework, wire formats, historical-filing flow
 - [docs/COMPENSATION_RULES.md](docs/COMPENSATION_RULES.md) — DOT vs EU261 vs card logic, disclaimers
-- [docs/PITCH.md](docs/PITCH.md) — navigable slide deck
+- [docs/PITCH.md](docs/PITCH.md) — markdown pitch + screenshot gallery
 - [AGENTS.md](AGENTS.md) — agent / host Python workflow
 
 ## Repo hygiene
