@@ -1,0 +1,44 @@
+{
+  "event": {
+    "kind": "delay",
+    "leg": {
+      "carrier_iata": "UA",
+      "flight_number": "UA1234",
+      "departure_airport": "SFO",
+      "arrival_airport": "JFK",
+      "scheduled_departure": "2026-06-01T18:00:00+00:00",
+      "scheduled_arrival": "2026-06-02T02:30:00+00:00",
+      "actual_departure": "2026-06-02T01:30:00+00:00",
+      "status": "delayed"
+    },
+    "detected_at": "2026-06-02T01:35:00+00:00",
+    "delay_minutes": 450,
+    "extraordinary_circumstance_claimed": false
+  },
+  "profile": {
+    "user_id": "user-demo",
+    "home_airport": "SFO",
+    "dot_applicable": true,
+    "eu261_applicable": false,
+    "credit_cards": [
+      {
+        "issuer": "Chase",
+        "product_name": "Sapphire Reserve",
+        "trip_delay_hours_threshold": 6,
+        "cancellation": true,
+        "max_claim_usd": 500
+      }
+    ],
+    "business_policy": {
+      "employer": "Acme Corp",
+      "reimburses_hotels_on_overnight_delay": true,
+      "max_lodging_per_night_usd": 250
+    },
+    "airline_status": [
+      {
+        "program": "United MileagePlus",
+        "tier": "Gold"
+      }
+    ]
+  }
+}

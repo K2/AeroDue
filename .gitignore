@@ -216,3 +216,22 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# AeroDue — on-device model weights (download per backend/inference/models.yaml)
+models/
+*.gguf
+*.onnx
+android/app/src/main/assets/models/
+*.litertlm
+
+# Android / Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+.env.android
+*.apk
+*.aab
+.idea/
+*.iml
+.DS_Store

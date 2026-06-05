@@ -1,0 +1,7 @@
+[versions]
+litertlm = "0.13.1"
+coroutines = "1.8.1"
+
+[libraries]
+litertlm-android = { group = "com.google.ai.edge.litertlm", name = "litertlm-android", version.ref = "litertlm" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
