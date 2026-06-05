@@ -10,7 +10,7 @@
 |-------|------|--------|
 | Native engine | `android/core/` | `CompensationEngine`, DOT/EU261, card/business perks |
 | Android UI | `android/app/` | Jetpack Compose, API 34 |
-| On-device LLM | `android/llm/` LiteRT-LM 0.13 | `LlmRationaleRunner` · GPU→CPU fallback |
+| On-device LLM | `android/llm/` LiteRT-LM 0.13 | `LiteRtLlmRationaleRunner` · GPU→CPU · rules fallback |
 | Host Python | `backend/aerodue/` | CLI, YAML regulations, optional parity with Kotlin |
 
 ## Build & test

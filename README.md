@@ -16,8 +16,8 @@ The Android app runs a **native Kotlin engine** (`android/core/`). The Python `b
 
 Primary candidates (≤ ~2GB quantized for Pixel 8):
 
-- **Qwen2.5-0.5B-Instruct** or **Qwen2.5-1.5B-Instruct** (4-bit GGUF / MediaPipe)
-- **SmolLM2-360M-Instruct** (lighter fallback)
+- **Qwen2.5-0.5B-Instruct** (`.litertlm` on device via LiteRT-LM; GGUF for host eval)
+- **SmolLM2-360M-Instruct** (lighter GGUF fallback profile)
 
 The LLM interprets unstructured policy text; deterministic rules in `android/core` (mirrored in `backend/` for host dev) produce final eligibility and amounts.
 

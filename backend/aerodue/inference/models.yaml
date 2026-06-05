@@ -1,9 +1,20 @@
 # On-device model profiles for Pixel 8 class hardware (Tensor G3, 8GB RAM)
 # Ship ONE active profile in the APK; others for A/B or fallback.
 
-default_profile: qwen2_5_0_5b_q4
+default_profile: qwen2_5_0_5b_litertlm
 
 profiles:
+  qwen2_5_0_5b_litertlm:
+    family: qwen2.5
+    repo: litert-community/Qwen2.5-0.5B-Instruct
+    filename: qwen2.5-0.5b-instruct.litertlm
+    format: litertlm
+    quantization: int4
+    context_tokens: 4096
+    max_tokens: 512
+    ram_budget_mb: 1200
+    notes: Primary on Android — LiteRT-LM via android/llm (Pixel 8 GPU/CPU)
+
   qwen2_5_0_5b_q4:
     family: qwen2.5
     repo: Qwen/Qwen2.5-0.5B-Instruct-GGUF
@@ -27,8 +38,8 @@ profiles:
     notes: Fallback when thermal throttling or low memory
 
 runtime:
-  # Android: MediaPipe LLM Inference / llama.cpp JNI — set in app build
-  preferred_android: mediapipe_genai
+  # Android: LiteRT-LM (android/llm); GGUF profiles for host eval / future JNI
+  preferred_android: litert_lm
   temperature: 0.2
   top_p: 0.9
 

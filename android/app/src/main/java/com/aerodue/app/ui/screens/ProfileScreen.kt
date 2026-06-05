@@ -13,10 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.aerodue.app.webview.WebViewDevConfig
 
 @Composable
 fun ProfileScreen() {
+    val context = LocalContext.current
+    val webViewProvider = remember { WebViewDevConfig.providerLabel(context) }
     val homeAirport = remember { mutableStateOf("SFO") }
     val dotRules = remember { mutableStateOf(true) }
     val euRules = remember { mutableStateOf(false) }
@@ -46,6 +50,11 @@ fun ProfileScreen() {
             text = "Engine: Kotlin :core · LLM: :llm LiteRT-LM (${com.aerodue.core.inference.ModelProfiles.defaultProfileId})",
             style = MaterialTheme.typography.labelSmall,
             modifier = Modifier.padding(top = 24.dp),
+        )
+        Text(
+            text = "System WebView: $webViewProvider",
+            style = MaterialTheme.typography.labelSmall,
+            modifier = Modifier.padding(top = 4.dp),
         )
     }
 }

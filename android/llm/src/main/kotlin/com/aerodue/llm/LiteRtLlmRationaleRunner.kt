@@ -1,6 +1,7 @@
 package com.aerodue.llm
 
 import android.content.Context
+import android.util.Log
 import com.aerodue.core.domain.ClaimRecommendation
 import com.aerodue.core.domain.DisruptionEvent
 import com.aerodue.core.domain.UserCoverageProfile
@@ -39,8 +40,11 @@ class LiteRtLlmRationaleRunner(
             if (engine != null) return@withContext true
             engine?.close()
             engine = null
-            Engine.setNativeMinLogSeverity(LogSeverity.WARN)
-            engine = openEngine(preferGpu = true) ?: openEngine(preferGpu = false)
+            Engine.setNativeMinLogSeverity(LogSeverity.ERROR)
+            // CPU is the reference backend and matches the int8 prefill/decode TFLite variant.
+            // GPU graph compilation aborts (native SIGABRT) for this model, so don't risk it.
+            engine = openEngine(preferGpu = false)
+            Log.i(TAG, "warmUp engine loaded=${engine != null} model=${modelFile.absolutePath} (${modelFile.length()} bytes)")
             engine != null
         }
     }
@@ -68,11 +72,15 @@ class LiteRtLlmRationaleRunner(
                             ),
                         ),
                     ).use { conversation ->
+                        val started = System.currentTimeMillis()
                         val response = conversation.sendMessage(prompt)
-                        response.text?.takeIf { it.isNotBlank() }
+                        val text = response.toString()
+                        Log.i(TAG, "on-device generation took ${System.currentTimeMillis() - started}ms; output=\n$text")
+                        text.takeIf { it.isNotBlank() }
                             ?: ruleFallback.explain(event, profile, claims)
                     }
-                } catch (_: Exception) {
+                } catch (e: Exception) {
+                    Log.w(TAG, "generation failed, using rule fallback", e)
                     ruleFallback.explain(event, profile, claims)
                 }
             }
@@ -99,6 +107,7 @@ class LiteRtLlmRationaleRunner(
     }
 
     companion object {
+        private const val TAG = "AeroDueLlm"
         private const val SYSTEM_INSTRUCTION =
             "You are AeroDue, an offline travel compensation assistant. " +
                 "Use only the facts in the user message. Never invent dollar amounts. " +

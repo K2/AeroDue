@@ -5,6 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.CardGiftcard
 import androidx.compose.material.icons.filled.Flight
+import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -25,6 +26,7 @@ import com.aerodue.app.ui.screens.ClaimsScreen
 import com.aerodue.app.ui.screens.CoverageScreen
 import com.aerodue.app.ui.screens.HomeScreen
 import com.aerodue.app.ui.screens.ProfileScreen
+import com.aerodue.app.ui.screens.RegulationsScreen
 
 sealed class Route(val path: String) {
     data object Auth : Route("auth")
@@ -32,6 +34,7 @@ sealed class Route(val path: String) {
     data object Coverage : Route("coverage")
     data object Claims : Route("claims")
     data object Profile : Route("profile")
+    data object Regulations : Route("regulations")
 }
 
 @Composable
@@ -45,6 +48,7 @@ fun AeroDueApp() {
         Triple(Route.Home, "Trip", Icons.Default.Home),
         Triple(Route.Coverage, "Coverage", Icons.Default.CardGiftcard),
         Triple(Route.Claims, "Claims", Icons.Default.Flight),
+        Triple(Route.Regulations, "Rules", Icons.Default.Gavel),
         Triple(Route.Profile, "Profile", Icons.Default.AccountCircle),
     )
 
@@ -90,6 +94,7 @@ fun AeroDueApp() {
             composable(Route.Home.path) { HomeScreen() }
             composable(Route.Coverage.path) { CoverageScreen() }
             composable(Route.Claims.path) { ClaimsScreen() }
+            composable(Route.Regulations.path) { RegulationsScreen() }
             composable(Route.Profile.path) { ProfileScreen() }
         }
     }
