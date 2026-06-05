@@ -87,6 +87,35 @@ class LiteRtLlmRationaleRunner(
         }
     }
 
+    override suspend fun generate(prompt: String, system: String?): String {
+        if (!warmUp()) return ""
+        return mutex.withLock {
+            withContext(Dispatchers.IO) {
+                try {
+                    val eng = engine ?: return@withContext ""
+                    eng.createConversation(
+                        ConversationConfig(
+                            systemInstruction = Contents.of(system ?: SYSTEM_INSTRUCTION),
+                            samplerConfig = SamplerConfig(
+                                topK = 40,
+                                topP = 0.9,
+                                temperature = 0.3,
+                            ),
+                        ),
+                    ).use { conversation ->
+                        val started = System.currentTimeMillis()
+                        val text = conversation.sendMessage(prompt).toString()
+                        Log.i(TAG, "generate took ${System.currentTimeMillis() - started}ms")
+                        text.trim()
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "generate failed", e)
+                    ""
+                }
+            }
+        }
+    }
+
     fun close() {
         engine?.close()
         engine = null

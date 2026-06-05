@@ -26,18 +26,24 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.aerodue.app.ui.screens.AuthScreen
 import com.aerodue.app.ui.screens.ClaimsScreen
+import com.aerodue.app.ui.screens.ConsentScreen
 import com.aerodue.app.ui.screens.CoverageScreen
 import com.aerodue.app.ui.screens.HomeScreen
+import com.aerodue.app.ui.screens.IntegrationsScreen
+import com.aerodue.app.ui.screens.PremiumScreen
 import com.aerodue.app.ui.screens.ProfileScreen
 import com.aerodue.app.ui.screens.RegulationsScreen
 
 sealed class Route(val path: String) {
     data object Auth : Route("auth")
+    data object Consent : Route("consent")
     data object Home : Route("home")
     data object Coverage : Route("coverage")
     data object Claims : Route("claims")
     data object Profile : Route("profile")
     data object Regulations : Route("regulations")
+    data object Premium : Route("premium")
+    data object Integrations : Route("integrations")
 }
 
 @Composable
@@ -45,7 +51,8 @@ fun AeroDueApp() {
     val navController = rememberNavController()
     val backStack by navController.currentBackStackEntryAsState()
     val current = backStack?.destination
-    val showBottomBar = current?.route != Route.Auth.path
+    val showBottomBar = current?.route != Route.Auth.path &&
+        current?.route != Route.Consent.path
 
     val bottomItems = listOf(
         Triple(Route.Home, "Trip", Icons.Outlined.Home),
@@ -99,17 +106,36 @@ fun AeroDueApp() {
             composable(Route.Auth.path) {
                 AuthScreen(
                     onSignedIn = {
-                        navController.navigate(Route.Home.path) {
+                        navController.navigate(Route.Consent.path) {
                             popUpTo(Route.Auth.path) { inclusive = true }
                         }
                     },
                 )
             }
-            composable(Route.Home.path) { HomeScreen() }
+            composable(Route.Consent.path) {
+                ConsentScreen(
+                    onContinue = {
+                        navController.navigate(Route.Home.path) {
+                            popUpTo(Route.Consent.path) { inclusive = true }
+                        }
+                    },
+                )
+            }
+            composable(Route.Home.path) {
+                HomeScreen(onOpenPremium = { navController.navigate(Route.Premium.path) })
+            }
+            composable(Route.Premium.path) {
+                PremiumScreen(onBack = { navController.popBackStack() })
+            }
             composable(Route.Coverage.path) { CoverageScreen() }
             composable(Route.Claims.path) { ClaimsScreen() }
             composable(Route.Regulations.path) { RegulationsScreen() }
-            composable(Route.Profile.path) { ProfileScreen() }
+            composable(Route.Profile.path) {
+                ProfileScreen(onOpenIntegrations = { navController.navigate(Route.Integrations.path) })
+            }
+            composable(Route.Integrations.path) {
+                IntegrationsScreen(onBack = { navController.popBackStack() })
+            }
         }
     }
 }

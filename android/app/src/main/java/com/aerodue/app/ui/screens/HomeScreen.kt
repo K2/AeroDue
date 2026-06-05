@@ -50,7 +50,7 @@ import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onOpenPremium: () -> Unit = {}) {
     val app = LocalContext.current.applicationContext as AeroDueApplication
     val status = TripMonitorService.sampleStatus()
     var summary by remember { mutableStateOf<String?>(null) }
@@ -196,11 +196,54 @@ fun HomeScreen() {
                 }
             }
 
+            PremiumCta(onOpenPremium)
+
             EngineStatusRow(
                 modelId = ModelProfiles.defaultProfileId,
                 llmLoaded = llmLoaded,
             )
             Spacer(Modifier.height(4.dp))
+        }
+    }
+}
+
+@Composable
+private fun PremiumCta(onOpenPremium: () -> Unit) {
+    Surface(
+        onClick = onOpenPremium,
+        shape = RoundedCornerShape(18.dp),
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Default.AutoAwesome,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier.size(22.dp),
+            )
+            Spacer(Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = "Optimize my trip",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = "Premium · agent plans flight, hotel, ground & airport",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f),
+                )
+            }
+            Text(
+                text = "→",
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
         }
     }
 }

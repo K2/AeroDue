@@ -16,4 +16,7 @@ class RuleOnlyRationaleRunner : LlmRationaleRunner {
         profile: UserCoverageProfile,
         claims: List<ClaimRecommendation>,
     ): String = Rationale.explainOffline(event, profile, claims)
+
+    /** No model installed — let the caller use deterministic copy. */
+    override suspend fun generate(prompt: String, system: String?): String = ""
 }

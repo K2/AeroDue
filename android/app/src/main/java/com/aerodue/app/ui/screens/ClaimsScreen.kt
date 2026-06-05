@@ -23,17 +23,23 @@ import androidx.compose.material.icons.outlined.CreditCard
 import androidx.compose.material.icons.outlined.Flight
 import androidx.compose.material.icons.outlined.Gavel
 import androidx.compose.material.icons.outlined.Redeem
+import androidx.compose.material.icons.outlined.Gavel
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +50,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.aerodue.app.AeroDueApplication
+import com.aerodue.app.filing.FilingRecord
+import com.aerodue.app.filing.FilingStatus
 import com.aerodue.app.ui.components.HeroHeader
 import com.aerodue.app.ui.components.MoneyBadge
 import com.aerodue.app.ui.theme.Amber500
@@ -55,6 +63,7 @@ import com.aerodue.core.demo.DemoFixtures
 import com.aerodue.core.domain.ClaimRecommendation
 import com.aerodue.core.domain.CompensationSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
@@ -73,6 +82,10 @@ private fun CompensationSource.meta(): SourceMeta = when (this) {
 fun ClaimsScreen() {
     val app = LocalContext.current.applicationContext as AeroDueApplication
     val service = app.compensationService
+    val filing = app.filingService
+    val coordinator = app.filingCoordinator
+    val scope = rememberCoroutineScope()
+    val filingState by filing.state.collectAsState()
     val claims = remember { service.assessDemo() }
     var summary by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(true) }
@@ -154,8 +167,61 @@ fun ClaimsScreen() {
                 }
             }
 
+            item {
+                Surface(
+                    shape = MaterialTheme.shapes.medium,
+                    color = MaterialTheme.colorScheme.surface,
+                    tonalElevation = 1.dp,
+                ) {
+                    Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.Top) {
+                        Icon(
+                            imageVector = Icons.Outlined.Gavel,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(20.dp),
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                "AeroDue is not a legal service",
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                "We prepare your paperwork, file with your confirmation, and help you follow up if a claim is rejected. You stay in control and submit each step.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 4.dp),
+                            )
+                        }
+                    }
+                }
+            }
+
             items(claims, key = { "${it.source}-${it.title}" }) { claim ->
-                ClaimCard(claim)
+                val key = "${claim.source}-${claim.title}"
+                val record = filingState[key] ?: FilingRecord(claimKey = key)
+                val sourceLabel = claim.source.meta().label
+                ClaimCard(
+                    claim = claim,
+                    record = record,
+                    onFile = {
+                        scope.launch {
+                            coordinator.file(key, claim.title, sourceLabel, claim.estimatedAmountUsd)
+                        }
+                    },
+                    onAdvance = { filing.advance(key) },
+                    onReject = { filing.reject(key, "Insufficient documentation") },
+                    onFollowUp = {
+                        scope.launch {
+                            coordinator.analyzeAndRefile(
+                                key,
+                                claim.title,
+                                sourceLabel,
+                                record.note ?: "Insufficient documentation",
+                            )
+                        }
+                    },
+                )
             }
 
             item {
@@ -171,7 +237,14 @@ fun ClaimsScreen() {
 }
 
 @Composable
-private fun ClaimCard(claim: ClaimRecommendation) {
+private fun ClaimCard(
+    claim: ClaimRecommendation,
+    record: FilingRecord,
+    onFile: () -> Unit,
+    onAdvance: () -> Unit,
+    onReject: () -> Unit,
+    onFollowUp: () -> Unit,
+) {
     val meta = claim.source.meta()
     Surface(
         shape = MaterialTheme.shapes.medium,
@@ -263,6 +336,177 @@ private fun ClaimCard(claim: ClaimRecommendation) {
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
+                }
+            }
+
+            Spacer(Modifier.height(14.dp))
+            FilingFooter(
+                record = record,
+                onFile = onFile,
+                onAdvance = onAdvance,
+                onReject = onReject,
+                onFollowUp = onFollowUp,
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilingFooter(
+    record: FilingRecord,
+    onFile: () -> Unit,
+    onAdvance: () -> Unit,
+    onReject: () -> Unit,
+    onFollowUp: () -> Unit,
+) {
+    val (label, tone) = when (record.status) {
+        FilingStatus.NOT_FILED -> "Not filed" to MaterialTheme.colorScheme.onSurfaceVariant
+        FilingStatus.FILED -> "Filed" to Indigo500
+        FilingStatus.IN_REVIEW -> "In review" to Amber500
+        FilingStatus.PAID -> "Paid" to Money500
+        FilingStatus.REJECTED -> "Rejected" to Color(0xFFE11D48)
+        FilingStatus.APPEALED -> "Appeal filed" to Sky500
+    }
+
+    Surface(
+        shape = RoundedCornerShape(12.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Column(modifier = Modifier.padding(12.dp)) {
+            if (record.working) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp),
+                        strokeWidth = 2.dp,
+                    )
+                    Spacer(Modifier.width(10.dp))
+                    Text(
+                        text = record.workingMessage ?: "Working…",
+                        style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurface,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                return@Column
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(8.dp)
+                        .clip(RoundedCornerShape(50))
+                        .background(tone),
+                )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = tone,
+                    fontWeight = FontWeight.Bold,
+                )
+                record.reference?.let {
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = "· $it",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+
+            record.note?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 6.dp),
+                )
+            }
+
+            if (record.rejectionSummary != null) {
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Assistant analysis",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Sky500,
+                    fontWeight = FontWeight.Bold,
+                )
+                Text(
+                    text = record.rejectionSummary,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+                record.rejectionFixes.forEach { fix ->
+                    Row(modifier = Modifier.padding(top = 3.dp)) {
+                        Text(
+                            text = "• ",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Sky500,
+                        )
+                        Text(
+                            text = fix,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                when (record.status) {
+                    FilingStatus.NOT_FILED -> {
+                        Button(
+                            onClick = onFile,
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 6.dp,
+                            ),
+                        ) { Text("File claim", style = MaterialTheme.typography.labelMedium) }
+                    }
+                    FilingStatus.FILED, FilingStatus.IN_REVIEW -> {
+                        Button(
+                            onClick = onAdvance,
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 6.dp,
+                            ),
+                        ) { Text("Advance", style = MaterialTheme.typography.labelMedium) }
+                        OutlinedButton(
+                            onClick = onReject,
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 6.dp,
+                            ),
+                        ) { Text("Simulate rejection", style = MaterialTheme.typography.labelMedium) }
+                    }
+                    FilingStatus.REJECTED -> {
+                        Button(
+                            onClick = onFollowUp,
+                            shape = RoundedCornerShape(10.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Sky500),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 6.dp,
+                            ),
+                        ) { Text("Follow up (appeal)", style = MaterialTheme.typography.labelMedium) }
+                    }
+                    FilingStatus.APPEALED -> {
+                        Button(
+                            onClick = onAdvance,
+                            shape = RoundedCornerShape(10.dp),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                horizontal = 14.dp,
+                                vertical = 6.dp,
+                            ),
+                        ) { Text("Advance", style = MaterialTheme.typography.labelMedium) }
+                    }
+                    FilingStatus.PAID -> Unit
                 }
             }
         }

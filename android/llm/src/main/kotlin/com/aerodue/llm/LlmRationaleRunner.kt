@@ -19,4 +19,11 @@ interface LlmRationaleRunner {
         profile: UserCoverageProfile,
         claims: List<ClaimRecommendation>,
     ): String
+
+    /**
+     * Generic on-device generation for app-side assistant flows (filing notes,
+     * rejection analysis, trip planning). Returns "" when no model is available
+     * so callers can fall back to deterministic copy.
+     */
+    suspend fun generate(prompt: String, system: String? = null): String
 }
